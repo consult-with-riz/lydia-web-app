@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lydia — Behavioural Intelligence Co-pilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3B4FC8;
+  --purple:#B060C8;
+  --grad:linear-gradient(135deg,#3B4FC8 0%,#7B52C8 50%,#C060C8 100%);
+  --w:#fff;
+  --w90:rgba(255,255,255,.9);
+  --w70:rgba(255,255,255,.7);
+  --w50:rgba(255,255,255,.5);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --w08:rgba(255,255,255,.08);
+  --w05:rgba(255,255,255,.05);
+  --lavender:rgba(180,160,255,.9);
+  --font:'Montserrat',sans-serif;
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--grad);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* TOP NAV */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.5rem;height:52px;flex-shrink:0;
+  background:rgba(0,0,0,.15);border-bottom:1px solid var(--w12);
+  backdrop-filter:blur(8px);
+}
+.topnav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{
+  width:30px;height:30px;border-radius:50%;
+  border:1.5px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-logo svg{width:16px;height:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--w);letter-spacing:0.01em}
+.brand-tag{font-size:10px;font-weight:500;color:var(--w50);letter-spacing:0.08em;text-transform:uppercase;border-left:1px solid var(--w20);padding-left:10px;margin-left:4px}
+.topnav-nav{display:flex;gap:2rem}
+.topnav-nav a{font-size:12px;font-weight:600;color:var(--w50);text-decoration:none;letter-spacing:0.04em;padding:4px 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.topnav-nav a.active{color:var(--w);border-bottom-color:var(--w)}
+.topnav-right{display:flex;align-items:center;gap:12px}
+.icon-btn{width:32px;height:32px;border-radius:8px;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:background .2s}
+.icon-btn:hover{background:var(--w20)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--w20);border:2px solid var(--w50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--w);cursor:pointer}
+
+/* MAIN LAYOUT */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT PANE */
+.left-pane{width:236px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--w12);background:rgba(0,0,0,.14);overflow:hidden}
+.left-inner{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.new-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;margin-bottom:1.25rem;background:var(--w);color:var(--blue);border:none;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.new-btn:hover{opacity:.9}
+.search-box{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:var(--w08);border:1px solid var(--w12);margin-bottom:1.25rem}
+.search-box input{background:none;border:none;outline:none;font-family:var(--font);font-size:11px;color:var(--w);width:100%}
+.search-box input::placeholder{color:var(--w50)}
+.s-ico{font-size:12px;color:var(--w50)}
+.pane-section{margin-bottom:1.25rem}
+.pane-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--w50);margin-bottom:8px;padding:0 4px}
+.pane-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);font-size:12px;font-weight:500;color:var(--w70);cursor:pointer;transition:background .2s,color .2s;text-decoration:none}
+.pane-item:hover{background:var(--w08);color:var(--w)}
+.pane-item.active{background:var(--w20);color:var(--w);font-weight:600}
+.p-ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.hist-item{padding:7px 10px;border-radius:8px;font-size:11px;font-weight:400;color:var(--w50);cursor:pointer;transition:background .2s,color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px}
+.hist-item:hover{background:var(--w08);color:var(--w70)}
+.hist-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--w20);flex-shrink:0}
+.left-bottom{padding:1rem;border-top:1px solid var(--w12);display:flex;flex-direction:column;gap:4px}
+.cap-bar{padding:8px 10px;background:var(--w08);border-radius:var(--r);margin-top:8px}
+.cap-top{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--w50);margin-bottom:6px;display:flex;justify-content:space-between}
+.cap-track{height:4px;background:var(--w20);border-radius:4px}
+.cap-fill{height:100%;width:72%;background:var(--w);border-radius:4px}
+
+/* CENTER PANE */
+.center-pane{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.center-scroll{flex:1;overflow-y:auto;padding:2rem 2.5rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+
+/* HERO CARD */
+.hero-card{
+  background:var(--grad);border-radius:var(--r-lg);
+  padding:2.5rem 2.5rem 2rem;text-align:center;margin-bottom:1.75rem;
+  position:relative;overflow:hidden;border:1px solid var(--w20);
+}
+.hero-card::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-card::after{content:'';position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-h{font-size:28px;font-weight:700;color:var(--w);margin-bottom:6px;letter-spacing:-0.01em;position:relative;z-index:1}
+.hero-h span{color:rgba(255,255,255,.7)}
+.hero-sub{font-size:13px;color:var(--w70);line-height:1.6;margin-bottom:1.75rem;font-weight:400;position:relative;z-index:1}
+.hero-pills{display:flex;justify-content:center;gap:10px;margin-bottom:1.75rem;position:relative;z-index:1;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:7px;padding:8px 16px;background:var(--w20);border:1px solid var(--w50);border-radius:100px;font-size:12px;font-weight:600;color:var(--w);cursor:pointer;transition:background .2s,color .2s}
+.pill:hover{background:var(--w);color:var(--blue)}
+.hero-input-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);border-radius:var(--r);padding:4px 4px 4px 16px;position:relative;z-index:1;max-width:640px;margin:0 auto}
+.hero-inp{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:14px;color:#333;padding:10px 0}
+.hero-inp::placeholder{color:#aaa}
+.send-btn{width:40px;height:40px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.send-btn:hover{background:var(--purple)}
+.send-btn svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* MORNING BRIEFING */
+.briefing{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.75rem;display:flex;align-items:flex-start;gap:1rem}
+.brief-av{width:40px;height:40px;border-radius:50%;background:var(--w20);border:1.5px solid var(--w50);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.brief-kicker{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--w50);margin-bottom:6px}
+.brief-text{font-size:12px;font-style:italic;color:var(--w90);line-height:1.65;margin-bottom:8px;font-weight:400}
+.brief-link{font-size:11px;font-weight:700;color:var(--lavender);cursor:pointer}
+
+/* SECTION LABEL */
+.sec-lbl{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--w50);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.sec-lbl::before{content:'';width:14px;height:2px;background:var(--w50);border-radius:2px}
+
+/* CAPABILITY CARDS */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.75rem}
+.cap-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);padding:1.25rem;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.cap-card:hover{background:var(--w12);border-color:var(--w20);transform:translateY(-2px)}
+.cap-ico{width:40px;height:40px;border-radius:10px;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:0.9rem}
+.cap-t{font-size:13px;font-weight:700;color:var(--w);margin-bottom:4px}
+.cap-d{font-size:11px;color:var(--w50);line-height:1.55;font-weight:400}
+
+/* STARTER QUESTIONS */
+.starter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.75rem}
+.starter-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1.1rem 1.25rem;cursor:pointer;transition:background .2s,border-color .2s}
+.starter-card:hover{background:var(--w12);border-color:var(--w20)}
+.starter-q{font-size:12px;font-weight:500;color:var(--w90);line-height:1.55;margin-bottom:8px}
+.starter-act{font-size:11px;font-weight:700;color:var(--lavender);display:flex;align-items:center;gap:4px;transition:gap .2s}
+.starter-card:hover .starter-act{gap:8px}
+
+/* BOTTOM BAR */
+.bottom-bar{padding:1rem 1.5rem;border-top:1px solid var(--w12);background:rgba(0,0,0,.12);flex-shrink:0}
+.bottom-row{display:flex;align-items:center;gap:10px;background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);padding:4px 4px 4px 14px}
+.attach-ico{font-size:16px;color:var(--w50);cursor:pointer;padding:0 4px}
+.bottom-inp{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--w);padding:8px 0}
+.bottom-inp::placeholder{color:var(--w50)}
+.bottom-send{width:36px;height:36px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.bottom-send:hover{background:var(--purple)}
+.bottom-send svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.bottom-meta{display:flex;justify-content:center;gap:1.5rem;margin-top:8px}
+.meta-item{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:5px}
+
+/* RIGHT PANE */
+.right-pane{width:256px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--w12);background:rgba(0,0,0,.14);overflow:hidden}
+.right-inner{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.r-section{margin-bottom:1.5rem}
+.r-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--w50);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.r-see{font-size:9px;font-weight:700;letter-spacing:0.06em;color:var(--lavender);cursor:pointer}
+
+/* RESOURCE ITEMS */
+.res-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);background:var(--w08);border:1px solid var(--w12);margin-bottom:8px;cursor:pointer;transition:background .2s,border-color .2s}
+.res-item:hover{background:var(--w12);border-color:var(--w20)}
+.res-ico{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.res-ico.guide{background:rgba(168,85,247,.18)}
+.res-ico.script{background:rgba(59,130,246,.18)}
+.res-ico.story{background:rgba(234,179,8,.18)}
+.res-ico.debrief{background:rgba(34,197,94,.18)}
+.res-t{font-size:11px;font-weight:600;color:var(--w90);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:148px}
+.res-m{font-size:10px;color:var(--w50);font-weight:400}
+
+/* AI SUGGESTIONS */
+.sug-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1rem;margin-bottom:10px}
+.sug-kicker{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--lavender);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.sug-kicker::before{content:'✦';font-size:8px}
+.sug-text{font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:8px;font-weight:400}
+.sug-btn{font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--lavender);cursor:pointer;transition:color .2s}
+.sug-btn:hover{color:var(--w)}
+
+/* CLIENT PULSE */
+.pulse-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1rem;margin-bottom:10px}
+.pulse-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pulse-name{font-size:12px;font-weight:700;color:var(--w)}
+.pulse-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:0.06em}
+.pulse-badge.elevated{background:rgba(251,146,60,.2);color:rgba(251,146,60,.9)}
+.pulse-badge.stable{background:rgba(74,222,128,.15);color:rgba(74,222,128,.9)}
+.pulse-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.pulse-trait{font-size:10px;color:var(--w50);font-weight:500}
+.pulse-bar-w{width:80px;height:5px;background:var(--w20);border-radius:3px}
+.pulse-bar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+.pulse-bar-f.high{background:linear-gradient(90deg,rgba(251,146,60,.8),rgba(239,68,68,.8))}
+.pulse-note{font-size:10px;color:var(--w50);font-style:italic;margin-top:8px;line-height:1.5;padding-top:8px;border-top:1px solid var(--w12)}
+
+/* UPCOMING */
+.upcoming-item{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:var(--r);background:var(--w08);border:1px solid var(--w12);margin-bottom:8px;cursor:pointer;transition:background .2s}
+.upcoming-item:hover{background:var(--w12)}
+.upcoming-time{font-size:10px;font-weight:700;color:var(--lavender);flex-shrink:0;padding-top:1px;min-width:36px}
+.upcoming-t{font-size:11px;font-weight:600;color:var(--w90);margin-bottom:2px}
+.upcoming-d{font-size:10px;color:var(--w50);font-weight:400}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="topnav-brand">
+    <div class="brand-logo">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5"/>
+        <path d="M7 10C7 10 8.5 13 10 13C11.5 13 13 10 13 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Lydia</span>
+    <span class="brand-tag">Behavioural Intelligence Co-pilot</span>
+  </div>
+  <nav class="topnav-nav">
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Resources</a>
+    <a href="#">Client Profiles</a>
+    <a href="#">Sessions</a>
+  </nav>
+  <div class="topnav-right">
+    <div class="icon-btn">🔔</div>
+    <div class="icon-btn">⚙️</div>
+    <div class="avatar">AM</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT PANE -->
+  <div class="left-pane">
+    <div class="left-inner">
+      <button class="new-btn">✦ New Conversation</button>
+
+      <div class="search-box">
+        <span class="s-ico">🔍</span>
+        <input type="text" placeholder="Search sessions & insights..."/>
+      </div>
+
+      <div class="pane-section">
+        <div class="pane-label">Primary</div>
+        <div class="pane-item active"><span class="p-ico">🤖</span> AI Assistant</div>
+        <div class="pane-item"><span class="p-ico">👥</span> Client Profiles</div>
+        <div class="pane-item"><span class="p-ico">🎭</span> Roleplay Sessions</div>
+        <div class="pane-item"><span class="p-ico">📖</span> Money Stories</div>
+        <div class="pane-item"><span class="p-ico">🧭</span> Life Guide Cases</div>
+        <div class="pane-item"><span class="p-ico">📚</span> Resources</div>
+      </div>
+
+      <div class="pane-section">
+        <div class="pane-label">Recent Sessions</div>
+        <div class="hist-item">Inheritance conversation — Sarah J.</div>
+        <div class="hist-item">Loss aversion roleplay debrief</div>
+        <div class="hist-item">Money story: avoidant client</div>
+        <div class="hist-item">EQ coaching — new hire prep</div>
+        <div class="hist-item">Adult children dynamics guide</div>
+        <div class="hist-item">Divorce transition conversation</div>
+        <div class="hist-item">Anchoring bias — client script</div>
+        <div class="hist-item">Present bias: spending patterns</div>
+        <div class="hist-item">Financial anxiety check-in prep</div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="pane-item"><span class="p-ico">❓</span> Help Centre</div>
+      <div class="pane-item"><span class="p-ico">↪</span> Log Out</div>
+      <div class="cap-bar">
+        <div class="cap-top"><span>Lydia Pro</span><span>72% used</span></div>
+        <div class="cap-track"><div class="cap-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANE -->
+  <div class="center-pane">
+    <div class="center-scroll">
+
+      <!-- HERO CARD -->
+      <div class="hero-card">
+        <div class="hero-h">Hi Amy, how can I <span>help today?</span></div>
+        <p class="hero-sub">Take full advantage of Shaping Wealth's behavioral intelligence ecosystem:<br/>know-how, content, collaboration, and guidance.</p>
+        <div class="hero-pills">
+          <div class="pill">🎭 Roleplay</div>
+          <div class="pill">📖 Money Story</div>
+          <div class="pill">🧭 Financial Life Guide</div>
+        </div>
+        <div class="hero-input-row">
+          <input class="hero-inp" type="text" placeholder="Ask me anything!"/>
+          <button class="send-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MORNING BRIEFING -->
+      <div class="briefing">
+        <div class="brief-av">👩‍💼</div>
+        <div>
+          <div class="brief-kicker">🌅 Morning Briefing</div>
+          <div class="brief-text">"Lydia Insight: Sarah Johnson's recent responses suggest rising loss-aversion. Consider opening with the 'Peace of Mind' framing before your 2 PM conversation — and avoid leading with performance data."</div>
+          <div class="brief-link">Review full briefing →</div>
+        </div>
+      </div>
+
+      <!-- CAPABILITIES -->
+      <div class="sec-lbl">What Lydia can do</div>
+      <div class="cap-grid">
+        <div class="cap-card">
+          <div class="cap-ico">🎭</div>
+          <div class="cap-t">Roleplay</div>
+          <div class="cap-d">Practice difficult client conversations in a safe, AI-guided environment</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">📖</div>
+          <div class="cap-t">Money Story</div>
+          <div class="cap-d">Uncover the psychological roots of your client's relationship with wealth</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🧭</div>
+          <div class="cap-t">Financial Life Guide</div>
+          <div class="cap-d">Strategic roadmaps for major life transitions and family governance</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🧠</div>
+          <div class="cap-t">Behavioural Biases</div>
+          <div class="cap-d">Identify and navigate loss aversion, anchoring, present bias, and more</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">💬</div>
+          <div class="cap-t">Conversation Prep</div>
+          <div class="cap-d">Build emotionally intelligent scripts before difficult client meetings</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🤝</div>
+          <div class="cap-t">Family Dynamics</div>
+          <div class="cap-d">Navigate multi-generational conversations, inheritance, and values alignment</div>
+        </div>
+      </div>
+
+      <!-- STARTER QUESTIONS -->
+      <div class="sec-lbl">Get started with a question</div>
+      <div class="starter-grid">
+        <div class="starter-card">
+          <div class="starter-q">"My new young hire needs an EQ boost to handle high-net-worth calls. Any ideas?"</div>
+          <div class="starter-act">Start Coaching →</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"I'm completely overwhelmed by navigating emotional client reactions this quarter."</div>
+          <div class="starter-act">Simplify View →</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"I need to connect better with my client's adult children regarding inheritance."</div>
+          <div class="starter-act">Bridge Gap →</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"Help me understand why my client keeps avoiding conversations about estate planning."</div>
+          <div class="starter-act">Explore Pattern →</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM INPUT BAR -->
+    <div class="bottom-bar">
+      <div class="bottom-row">
+        <span class="attach-ico">📎</span>
+        <input class="bottom-inp" type="text" placeholder="Ask Lydia about a client's behaviour, prepare for a conversation, or explore a money story..."/>
+        <button class="bottom-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="bottom-meta">
+        <div class="meta-item">✦ AI insights grounded in behavioural science</div>
+        <div class="meta-item">🔒 End-to-end data encryption</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANE -->
+  <div class="right-pane">
+    <div class="right-inner">
+
+      <!-- RESOURCES -->
+      <div class="r-section">
+        <div class="r-label">📁 Resources <span class="r-see">SEE ALL</span></div>
+        <div class="res-item">
+          <div class="res-ico guide">📘</div>
+          <div>
+            <div class="res-t">Inheritance Conversation Guide</div>
+            <div class="res-m">Used 2h ago</div>
+          </div>
+        </div>
+        <div class="res-item">
+          <div class="res-ico script">💬</div>
+          <div>
+            <div class="res-t">Loss Aversion Scripts v3</div>
+            <div class="res-m">Updated yesterday</div>
+          </div>
+        </div>
+        <div class="res-item">
+          <div class="res-ico story">📖</div>
+          <div>
+            <div class="res-t">Money Story — Avoider Type</div>
+            <div class="res-m">3 days ago</div>
+          </div>
+        </div>
+        <div class="res-item">
+          <div class="res-ico debrief">🎭</div>
+          <div>
+            <div class="res-t">Roleplay Debrief: Divorce</div>
+            <div class="res-m">Last week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI SUGGESTIONS -->
+      <div class="r-section">
+        <div class="r-label">✦ AI Suggestions</div>
+        <div class="sug-card">
+          <div class="sug-kicker">Prompt for Sarah</div>
+          <div class="sug-text">"How have your feelings about your children's financial future changed after recent conversations with them?"</div>
+          <div class="sug-btn">Copy Prompt</div>
+        </div>
+        <div class="sug-card">
+          <div class="sug-kicker">Behavioural Nudge</div>
+          <div class="sug-text">Client X shows strong present-bias signals. Try anchoring the conversation on a near-term milestone rather than long-term outcomes.</div>
+          <div class="sug-btn">View Technique</div>
+        </div>
+        <div class="sug-card">
+          <div class="sug-kicker">Roleplay Suggestion</div>
+          <div class="sug-text">Practice the 'avoidant client' scenario before your Thursday session — Lydia has detected similar patterns with this profile.</div>
+          <div class="sug-btn">Start Roleplay</div>
+        </div>
+      </div>
+
+      <!-- CLIENT PULSE -->
+      <div class="r-section">
+        <div class="r-label">🧠 Client Pulse</div>
+        <div class="pulse-card">
+          <div class="pulse-header">
+            <div class="pulse-name">Sarah Johnson</div>
+            <div class="pulse-badge elevated">Elevated Anxiety</div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Loss Aversion</div>
+            <div class="pulse-bar-w"><div class="pulse-bar-f high" style="width:85%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Avoidance</div>
+            <div class="pulse-bar-w"><div class="pulse-bar-f high" style="width:70%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Trust</div>
+            <div class="pulse-bar-w"><div class="pulse-bar-f" style="width:60%"></div></div>
+          </div>
+          <div class="pulse-note">Lydia recommends opening with values alignment before any estate discussion today.</div>
+        </div>
+
+        <!-- UPCOMING SESSIONS -->
+        <div class="r-label" style="margin-top:4px">📅 Today's Sessions</div>
+        <div class="upcoming-item">
+          <div class="upcoming-time">2 PM</div>
+          <div>
+            <div class="upcoming-t">Sarah Johnson</div>
+            <div class="upcoming-d">Inheritance & estate framing</div>
+          </div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-time">4 PM</div>
+          <div>
+            <div class="upcoming-t">Marcus Webb</div>
+            <div class="upcoming-d">Life transition — divorce</div>
+          </div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-time">5 PM</div>
+          <div>
+            <div class="upcoming-t">Team Roleplay</div>
+            <div class="upcoming-d">Avoidant client scenario</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
