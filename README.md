@@ -1,6 +1,7 @@
 ##MVP
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v1
+https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v2
 
 
 ##Vision
