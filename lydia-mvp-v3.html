@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lydia MVP — Shaping Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3B4FC8;
+  --purple:#B060C8;
+  --grad:linear-gradient(135deg,#3B4FC8 0%,#7B52C8 50%,#C060C8 100%);
+  --w:#fff;
+  --w90:rgba(255,255,255,.9);
+  --w70:rgba(255,255,255,.7);
+  --w50:rgba(255,255,255,.5);
+  --w30:rgba(255,255,255,.3);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --w08:rgba(255,255,255,.08);
+  --w05:rgba(255,255,255,.05);
+  --lav:rgba(180,160,255,.95);
+  --lav-dim:rgba(180,160,255,.12);
+  --lav-border:rgba(180,160,255,.3);
+  --font:'Montserrat',sans-serif;
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--grad);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:52px;flex-shrink:0;background:rgba(0,0,0,.18);border-bottom:1px solid var(--w12);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--w50);display:flex;align-items:center;justify-content:center}
+.brand-mark svg{width:16px;height:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--w)}
+.brand-sub{font-size:10px;font-weight:500;color:var(--w50);letter-spacing:.08em;text-transform:uppercase;border-left:1px solid var(--w20);padding-left:10px;margin-left:4px}
+.nav-r{display:flex;align-items:center;gap:12px}
+.icon-btn{width:32px;height:32px;border-radius:8px;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:background .2s}
+.icon-btn:hover{background:var(--w20)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--w20);border:2px solid var(--w50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--w);cursor:pointer}
+
+/* LAYOUT */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT */
+.left{width:228px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--w12);background:rgba(0,0,0,.16)}
+.left-top{padding:1rem 1rem .75rem;flex-shrink:0}
+.new-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:var(--w);color:var(--blue);border:none;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-bottom:.9rem}
+.new-btn:hover{opacity:.9}
+.search{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:var(--w08);border:1px solid var(--w12)}
+.search input{background:none;border:none;outline:none;font-family:var(--font);font-size:11px;color:var(--w);width:100%}
+.search input::placeholder{color:var(--w50)}
+.left-scroll{flex:1;overflow-y:auto;padding:0 .75rem .75rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.hg{margin-bottom:1rem}
+.hd{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--w30);padding:8px 6px 5px}
+.hi{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:400;color:var(--w70);cursor:pointer;transition:background .2s,color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.hi:hover{background:var(--w08);color:var(--w90)}
+.hi.active{background:var(--w20);color:var(--w);font-weight:500}
+.left-foot{padding:.75rem 1rem 1rem;border-top:1px solid var(--w12);display:flex;flex-direction:column;gap:4px}
+.fi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;font-size:11px;font-weight:500;color:var(--w50);cursor:pointer;transition:background .2s,color .2s}
+.fi:hover{background:var(--w08);color:var(--w70)}
+
+/* CENTER */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.c-scroll{flex:1;overflow-y:auto;padding:2rem 2.5rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+
+/* HERO */
+.hero{background:var(--grad);border-radius:var(--r-lg);padding:2rem 2rem 1.75rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden;border:1px solid var(--w20)}
+.hero::before{content:'';position:absolute;top:-50px;left:-50px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero::after{content:'';position:absolute;bottom:-35px;right:-35px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-h{font-size:24px;font-weight:700;color:var(--w);margin-bottom:5px;letter-spacing:-.01em;position:relative;z-index:1}
+.hero-h span{color:rgba(255,255,255,.7)}
+.hero-sub{font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:1.25rem;font-weight:400;position:relative;z-index:1}
+
+/* PILLS — 7 capabilities */
+.pills-wrap{position:relative;z-index:1;margin-bottom:1.25rem}
+.pills-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--w20);border:1px solid var(--w50);border-radius:100px;font-size:11px;font-weight:600;color:var(--w);cursor:pointer;transition:all .2s;white-space:nowrap}
+.pill:hover{background:rgba(255,255,255,.3);border-color:var(--w)}
+.pill.active{background:var(--w);color:var(--blue);border-color:var(--w)}
+
+.hero-inp{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);border-radius:var(--r);padding:4px 4px 4px 14px;position:relative;z-index:1;max-width:580px;margin:0 auto}
+.hero-inp input{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:13px;color:#333;padding:9px 0}
+.hero-inp input::placeholder{color:#aaa}
+.send{width:38px;height:38px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.send:hover{background:var(--purple)}
+.send svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* TOOL PANELS */
+.tool-panel{display:none;animation:fadeIn .25s ease}
+.tool-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.tool-header{margin-bottom:1.5rem}
+.tool-back{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--w50);cursor:pointer;margin-bottom:1rem;transition:color .2s}
+.tool-back:hover{color:var(--w)}
+.tool-title{font-size:20px;font-weight:700;color:var(--w);margin-bottom:4px;letter-spacing:-.01em}
+.tool-desc{font-size:13px;color:var(--w70);font-weight:400;line-height:1.6}
+
+/* form elements */
+.form-group{margin-bottom:1.25rem}
+.form-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--w50);margin-bottom:7px}
+.form-input,.form-textarea,.form-select{
+  width:100%;background:var(--w12);border:1px solid var(--w20);
+  border-radius:var(--r);font-family:var(--font);font-size:13px;
+  color:var(--w);outline:none;transition:border-color .2s;
+}
+.form-input{padding:11px 14px;height:44px}
+.form-textarea{padding:12px 14px;resize:vertical;min-height:90px;line-height:1.6}
+.form-select{padding:11px 14px;height:44px;cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--w30)}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--w50)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--w);color:var(--blue);border:none;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:.5rem}
+.form-submit:hover{opacity:.9}
+
+/* OUTPUT CARDS */
+.output-section{margin-top:1.75rem;padding-top:1.75rem;border-top:1px solid var(--w12)}
+.output-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lav);margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.output-label::before{content:'✦';font-size:9px}
+
+/* starter card output */
+.starter-outputs{display:flex;flex-direction:column;gap:10px}
+.starter-out{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1rem 1.25rem;cursor:pointer;transition:background .2s,border-color .2s;position:relative}
+.starter-out:hover{background:var(--w12);border-color:var(--w20)}
+.so-approach{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lav);margin-bottom:6px}
+.so-text{font-size:13px;font-style:italic;color:var(--w90);line-height:1.6;margin-bottom:8px;font-weight:400}
+.so-copy{font-size:10px;font-weight:700;color:var(--w50);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px;transition:color .2s}
+.starter-out:hover .so-copy{color:var(--lav)}
+
+/* bias output */
+.bias-outputs{display:flex;flex-direction:column;gap:10px}
+.bias-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1rem 1.25rem}
+.bc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.bc-name{font-size:13px;font-weight:700;color:var(--w)}
+.bc-level{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.06em}
+.bc-level.hi{background:rgba(239,68,68,.2);color:rgba(255,130,130,.9)}
+.bc-level.med{background:rgba(234,179,8,.2);color:rgba(255,210,80,.9)}
+.bc-level.lo{background:rgba(34,197,94,.2);color:rgba(100,220,150,.9)}
+.bc-desc{font-size:12px;color:var(--w70);line-height:1.6;margin-bottom:8px;font-weight:400}
+.bc-tip{font-size:11px;font-style:italic;color:var(--lav);line-height:1.5;padding-top:8px;border-top:1px solid var(--w12)}
+
+/* brief output */
+.brief-output{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);overflow:hidden}
+.brief-section{padding:1rem 1.25rem;border-bottom:1px solid var(--w12)}
+.brief-section:last-child{border-bottom:none}
+.brief-sec-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lav);margin-bottom:8px}
+.brief-sec-body{font-size:12px;color:var(--w90);line-height:1.7;font-weight:400}
+.brief-sec-body li{margin-left:1rem;margin-bottom:4px}
+.brief-tag{display:inline-block;padding:3px 10px;background:rgba(239,68,68,.15);border-radius:100px;font-size:10px;font-weight:700;color:rgba(255,130,130,.9);margin-right:5px;margin-bottom:4px}
+.brief-tag.soft{background:rgba(34,197,94,.15);color:rgba(100,220,150,.9)}
+.brief-tag.watch{background:rgba(234,179,8,.15);color:rgba(255,210,80,.9)}
+
+/* archetype output */
+.archetype-hero-out{background:var(--grad);border-radius:var(--r-lg);padding:1.75rem;text-align:center;margin-bottom:10px;border:1px solid var(--w20)}
+.arch-icon{font-size:40px;margin-bottom:.75rem}
+.arch-name{font-size:20px;font-weight:700;color:var(--w);margin-bottom:4px;letter-spacing:-.01em}
+.arch-tagline{font-size:13px;color:var(--w70);font-weight:400;line-height:1.6}
+.arch-traits{display:flex;flex-direction:column;gap:8px;margin-top:1.25rem}
+.arch-trait{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:.9rem 1.1rem;display:flex;align-items:flex-start;gap:10px}
+.trait-dot{width:6px;height:6px;border-radius:50%;background:var(--lav);flex-shrink:0;margin-top:4px}
+.trait-text{font-size:12px;color:var(--w90);line-height:1.55;font-weight:400}
+.trait-text strong{color:var(--w);font-weight:700}
+
+/* scorecard output */
+.scorecard{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);overflow:hidden}
+.sc-row{padding:1rem 1.25rem;border-bottom:1px solid var(--w12);display:flex;align-items:flex-start;gap:12px}
+.sc-row:last-child{border-bottom:none}
+.sc-ico{font-size:20px;flex-shrink:0;width:28px;text-align:center}
+.sc-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--w50);margin-bottom:5px}
+.sc-body{font-size:12px;color:var(--w90);line-height:1.6;font-weight:400}
+.sc-score{display:flex;align-items:center;gap:10px;margin-top:8px}
+.sc-stars{color:var(--lav);font-size:14px;letter-spacing:2px}
+.sc-score-lbl{font-size:11px;font-weight:600;color:var(--w50)}
+.sc-improve{font-size:11px;font-style:italic;color:var(--lav);margin-top:6px;padding-top:6px;border-top:1px solid var(--w12)}
+
+/* HOME starters */
+.sec{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w50);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.sec::before{content:'';width:14px;height:2px;background:var(--w50);border-radius:2px}
+.sq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sq{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1rem 1.1rem;cursor:pointer;transition:background .2s,border-color .2s}
+.sq:hover{background:var(--w12);border-color:var(--w20)}
+.sq-q{font-size:12px;font-weight:500;color:var(--w90);line-height:1.55;margin-bottom:7px}
+.sq-a{font-size:11px;font-weight:700;color:var(--lav)}
+
+/* BOTTOM BAR */
+.btm{padding:1rem 1.5rem;border-top:1px solid var(--w12);background:rgba(0,0,0,.12);flex-shrink:0}
+.btm-row{display:flex;align-items:center;gap:10px;background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);padding:4px 4px 4px 14px}
+.attach{font-size:15px;color:var(--w50);cursor:pointer;padding:0 4px}
+.btm-inp{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--w);padding:8px 0}
+.btm-inp::placeholder{color:var(--w50)}
+.btm-send{width:34px;height:34px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.btm-send:hover{background:var(--purple)}
+.btm-send svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.btm-meta{display:flex;justify-content:center;gap:1.5rem;margin-top:7px}
+.btm-meta span{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+
+/* RIGHT */
+.right{width:256px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--w12);background:rgba(0,0,0,.16)}
+.right-head{padding:1rem 1rem .75rem;flex-shrink:0;border-bottom:1px solid var(--w12)}
+.right-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w50);margin-bottom:.6rem}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap}
+.filter{padding:3px 9px;border-radius:100px;font-size:10px;font-weight:600;color:var(--w50);border:1px solid var(--w20);cursor:pointer;transition:all .2s}
+.filter:hover{border-color:var(--w50);color:var(--w70)}
+.filter.on{background:var(--w20);border-color:var(--w50);color:var(--w)}
+.right-scroll{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.lib-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:.9rem 1rem;margin-bottom:8px;cursor:pointer;transition:background .2s,border-color .2s}
+.lib-card:hover{background:var(--w12);border-color:var(--w20)}
+.lc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px}
+.lc-title{font-size:11px;font-weight:600;color:var(--w90);line-height:1.4;flex:1}
+.lc-type{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:100px;flex-shrink:0}
+.lc-type.video{background:rgba(239,68,68,.2);color:rgba(255,130,130,.9)}
+.lc-type.pdf{background:rgba(168,85,247,.2);color:rgba(200,150,255,.9)}
+.lc-type.talk{background:rgba(59,130,246,.2);color:rgba(130,180,255,.9)}
+.lc-type.framework{background:rgba(34,197,94,.2);color:rgba(100,220,150,.9)}
+.lc-type.article{background:rgba(234,179,8,.2);color:rgba(255,210,80,.9)}
+.lc-meta{font-size:10px;color:var(--w50);font-weight:400}
+.right-foot{padding:.75rem 1rem;border-top:1px solid var(--w12);flex-shrink:0}
+.right-foot-note{font-size:10px;color:var(--w30);text-align:center;font-style:italic}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5"/>
+        <path d="M7 10C7 10 8.5 13 10 13C11.5 13 13 10 13 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Lydia</span>
+    <span class="brand-sub">by Shaping Wealth</span>
+  </div>
+  <div class="nav-r">
+    <div class="icon-btn">⚙️</div>
+    <div class="avatar">AM</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-top">
+      <button class="new-btn" onclick="showHome()">✦ New Conversation</button>
+      <div class="search">
+        <span style="font-size:12px;color:var(--w50)">🔍</span>
+        <input type="text" placeholder="Search conversations..."/>
+      </div>
+    </div>
+    <div class="left-scroll">
+      <div class="hg">
+        <div class="hd">Today</div>
+        <div class="hi active">Inheritance conversation — Sarah J.</div>
+        <div class="hi">Loss aversion opening lines</div>
+      </div>
+      <div class="hg">
+        <div class="hd">Yesterday</div>
+        <div class="hi">Money story: avoidant client</div>
+        <div class="hi">EQ coaching for new hire</div>
+        <div class="hi">Adult children & estate framing</div>
+      </div>
+      <div class="hg">
+        <div class="hd">This week</div>
+        <div class="hi">Divorce transition prep</div>
+        <div class="hi">Anchoring bias — script</div>
+        <div class="hi">Present bias: spending patterns</div>
+        <div class="hi">Financial anxiety check-in</div>
+      </div>
+      <div class="hg">
+        <div class="hd">Last week</div>
+        <div class="hi">Grief & money — widow client</div>
+        <div class="hi">Sudden wealth syndrome</div>
+        <div class="hi">Couple values misalignment</div>
+      </div>
+    </div>
+    <div class="left-foot">
+      <div class="fi"><span style="font-size:14px;width:18px;text-align:center">❓</span> Help Centre</div>
+      <div class="fi"><span style="font-size:14px;width:18px;text-align:center">↪</span> Log Out</div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div class="c-scroll" id="center-scroll">
+
+      <!-- HERO — always visible -->
+      <div class="hero">
+        <div class="hero-h">Hi Amy, how can I <span>help today?</span></div>
+        <p class="hero-sub">Take full advantage of Shaping Wealth's behavioral intelligence ecosystem — select a capability or ask me anything.</p>
+        <div class="pills-wrap">
+          <div class="pills-row">
+            <div class="pill" id="pill-roleplay" onclick="activatePill('roleplay')">🎭 Roleplay</div>
+            <div class="pill" id="pill-moneystory" onclick="activatePill('moneystory')">📖 Money Story</div>
+            <div class="pill" id="pill-lifeguide" onclick="activatePill('lifeguide')">🧭 Life Guide</div>
+            <div class="pill" id="pill-starter" onclick="activatePill('starter')">💬 Conversation Starter</div>
+            <div class="pill" id="pill-bias" onclick="activatePill('bias')">🧠 Bias Detector</div>
+            <div class="pill" id="pill-brief" onclick="activatePill('brief')">📋 Pre-Meeting Brief</div>
+            <div class="pill" id="pill-archetype" onclick="activatePill('archetype')">🪞 Client Archetype</div>
+          </div>
+        </div>
+        <div class="hero-inp">
+          <input type="text" placeholder="Ask me anything!"/>
+          <button class="send">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- HOME panel -->
+      <div class="tool-panel active" id="panel-home">
+        <div class="sec">Or get started with a question</div>
+        <div class="sq-grid">
+          <div class="sq"><div class="sq-q">"My new hire needs an EQ boost for high-net-worth calls."</div><div class="sq-a">Start Coaching →</div></div>
+          <div class="sq"><div class="sq-q">"I'm overwhelmed navigating emotional client reactions this quarter."</div><div class="sq-a">Simplify View →</div></div>
+          <div class="sq"><div class="sq-q">"I need to connect better with my client's adult children regarding inheritance."</div><div class="sq-a">Bridge Gap →</div></div>
+          <div class="sq"><div class="sq-q">"Why does my client keep avoiding estate planning conversations?"</div><div class="sq-a">Explore Pattern →</div></div>
+        </div>
+      </div>
+
+      <!-- ROLEPLAY panel -->
+      <div class="tool-panel" id="panel-roleplay">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">🎭 Roleplay</div>
+          <div class="tool-desc">Practice a difficult client conversation in a safe, AI-guided environment. Lydia will play the client.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Client situation</div>
+          <div class="form-textarea" style="background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);padding:12px 14px;font-family:var(--font);font-size:13px;color:var(--w90);line-height:1.6;min-height:90px">Client is a 58-year-old woman who recently inherited a large estate from her father. She becomes avoidant whenever inheritance is discussed and shows signs of guilt around accepting the money.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">Scenario type</div>
+            <select class="form-select"><option>Inheritance & estate</option><option>Divorce transition</option><option>Sudden wealth</option><option>Retirement anxiety</option></select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Difficulty</div>
+            <select class="form-select"><option>Moderate</option><option>Easy</option><option>Challenging</option></select>
+          </div>
+        </div>
+        <button class="form-submit" onclick="showRoleplayOutput()">✦ Begin Roleplay Session</button>
+        <div class="output-section hidden" id="roleplay-output">
+          <div class="output-label">Roleplay active — Lydia is playing Sarah</div>
+          <div class="bias-card" style="margin-bottom:10px">
+            <div style="font-size:12px;color:var(--w70);line-height:1.65;font-style:italic;font-weight:400">"Hello, thanks for making time today. I know we have a lot to go through but honestly... I'm not really sure I'm ready to talk about the estate stuff yet. Is that okay?"</div>
+            <div style="font-size:10px;color:var(--w50);margin-top:10px;padding-top:8px;border-top:1px solid var(--w12)">Lydia is playing Sarah · Avoidant · Grief-adjacent · Respond naturally to continue the roleplay</div>
+          </div>
+          <div class="hero-inp" style="max-width:100%;margin-top:1rem">
+            <input type="text" placeholder="Respond as you would in the real session..."/>
+            <button class="send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONEY STORY panel -->
+      <div class="tool-panel" id="panel-moneystory">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">📖 Money Story</div>
+          <div class="tool-desc">Uncover the psychological roots of your client's relationship with wealth through guided exploration.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Client name</div>
+          <input type="text" class="form-input" placeholder="e.g. Sarah Johnson" value="Sarah Johnson"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">What do you already know about this client's relationship with money?</div>
+          <textarea class="form-textarea" placeholder="Any observations, patterns, or things they've said that stood out...">Sarah seems to associate money with conflict — her parents argued about finances frequently when she was young. She tends to delay financial decisions and becomes visibly uncomfortable when discussions move to specifics.</textarea>
+        </div>
+        <div class="form-group">
+          <div class="form-label">What would be most useful to understand?</div>
+          <select class="form-select"><option>Root beliefs about money</option><option>Emotional triggers</option><option>Family money patterns</option><option>Identity & wealth</option></select>
+        </div>
+        <button class="form-submit">✦ Generate Money Story Framework</button>
+      </div>
+
+      <!-- LIFE GUIDE panel -->
+      <div class="tool-panel" id="panel-lifeguide">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">🧭 Financial Life Guide</div>
+          <div class="tool-desc">Strategic roadmaps for major life transitions and family governance conversations.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Client name</div>
+          <input type="text" class="form-input" placeholder="e.g. Marcus Webb" value="Marcus Webb"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Life transition</div>
+          <select class="form-select"><option>Divorce</option><option>Inheritance</option><option>Retirement</option><option>Business sale</option><option>Bereavement</option><option>Family governance</option></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Key context</div>
+          <textarea class="form-textarea" placeholder="What's happening in their life right now?">Marcus is 52, recently separated after 24 years of marriage. The divorce was amicable but he's struggling with identity — much of his financial self-image was tied to the household he built with his wife. He's engaged but anxious about what comes next.</textarea>
+        </div>
+        <button class="form-submit">✦ Build Life Guide Roadmap</button>
+      </div>
+
+      <!-- CONVERSATION STARTER panel -->
+      <div class="tool-panel" id="panel-starter">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">💬 Conversation Starter</div>
+          <div class="tool-desc">Generate emotionally intelligent opening lines for a difficult client conversation. Pick the one that fits.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">Client name</div>
+            <input type="text" class="form-input" placeholder="e.g. Sarah J." value="Sarah J."/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Topic</div>
+            <select class="form-select"><option>Inheritance</option><option>Divorce</option><option>Loss aversion</option><option>Estate planning</option><option>Retirement</option></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Client emotional state (what you're observing)</div>
+          <input type="text" class="form-input" placeholder="e.g. avoidant, anxious, resistant..." value="Avoidant, showing guilt around accepting the inheritance"/>
+        </div>
+        <button class="form-submit" onclick="showStarterOutput()">✦ Generate Opening Lines</button>
+        <div class="output-section hidden" id="starter-output">
+          <div class="output-label">3 opening lines — pick the one that fits</div>
+          <div class="starter-outputs">
+            <div class="starter-out">
+              <div class="so-approach">Soft — lead with the relationship</div>
+              <div class="so-text">"Before we get into anything practical today, I just wanted to check in — how are you actually doing with everything? Losing your father is huge, and I want to make sure we're taking care of you, not just the paperwork."</div>
+              <div class="so-copy">📋 Copy to clipboard</div>
+            </div>
+            <div class="starter-out">
+              <div class="so-approach">Values-led — anchor on what he wanted</div>
+              <div class="so-text">"I've been thinking about your father, and what I keep coming back to is — what do you think he most wanted for you? Not just financially, but in terms of how you feel about your life going forward."</div>
+              <div class="so-copy">📋 Copy to clipboard</div>
+            </div>
+            <div class="starter-out">
+              <div class="so-approach">Direct — name the avoidance gently</div>
+              <div class="so-text">"I've noticed that the estate conversation feels heavy for you, and I completely understand why. There's no rush — but when you're ready, I'd love to help you figure out what feels right. Where would you like to start?"</div>
+              <div class="so-copy">📋 Copy to clipboard</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIAS DETECTOR panel -->
+      <div class="tool-panel" id="panel-bias">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">🧠 Bias Detector</div>
+          <div class="tool-desc">Paste in your notes from a client meeting. Lydia reads them and surfaces the behavioural patterns it detects.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Paste your meeting notes</div>
+          <textarea class="form-textarea" style="min-height:140px" placeholder="Rough notes are fine — bullet points, fragments, anything you observed...">Client seemed very reluctant to discuss selling the family home even though it makes clear financial sense given her situation. She kept referring back to "what things were worth before" — seemed anchored on the original purchase price. Also noticed she kept deflecting when I mentioned the next 10 years, always bringing the conversation back to what she can do "right now" to feel more secure. She mentioned three times that she doesn't want to make any big decisions she might regret.</textarea>
+        </div>
+        <button class="form-submit" onclick="showBiasOutput()">✦ Detect Behavioural Patterns</button>
+        <div class="output-section hidden" id="bias-output">
+          <div class="output-label">3 behavioural patterns detected</div>
+          <div class="bias-outputs">
+            <div class="bias-card">
+              <div class="bc-head"><div class="bc-name">Anchoring Bias</div><div class="bc-level hi">Strong signal</div></div>
+              <div class="bc-desc">Client is cognitively anchored on the original purchase price of the family home, making it hard to evaluate its current value objectively. The reference point is emotional, not rational.</div>
+              <div class="bc-tip">Try asking: "If you were seeing this home for the first time today, what would feel like a fair price given everything you've described about your life now?"</div>
+            </div>
+            <div class="bias-card">
+              <div class="bc-head"><div class="bc-name">Present Bias</div><div class="bc-level hi">Strong signal</div></div>
+              <div class="bc-desc">Client repeatedly deflects from long-term planning to immediate security needs. She is discounting future outcomes in favour of short-term certainty — a classic present-bias pattern.</div>
+              <div class="bc-tip">Anchor the conversation on a near-term milestone (6–12 months) rather than 10-year outcomes to reduce psychological distance.</div>
+            </div>
+            <div class="bias-card">
+              <div class="bc-head"><div class="bc-name">Loss Aversion</div><div class="bc-level med">Moderate signal</div></div>
+              <div class="bc-desc">The repeated concern about "decisions she might regret" suggests the pain of potential loss is outweighing the potential benefit of action. She is in a defensive, protection-oriented state.</div>
+              <div class="bc-tip">Reframe choices around what she is protecting rather than what she might gain. "What matters most to keep safe?" is more accessible than "What do you want to build?"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRE-MEETING BRIEF panel -->
+      <div class="tool-panel" id="panel-brief">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">📋 Pre-Meeting Brief</div>
+          <div class="tool-desc">Tell Lydia who you're meeting and what you know. Get a one-page brief to walk in with confidence.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <div class="form-label">Client name</div>
+            <input type="text" class="form-input" value="Sarah Johnson"/>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Meeting in</div>
+            <select class="form-select"><option>30 minutes</option><option>1 hour</option><option>Tomorrow</option><option>This week</option></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">What's the context?</div>
+          <textarea class="form-textarea">Sarah is dealing with her father's recent passing and a significant inheritance she seems reluctant to engage with. She tends toward loss aversion and anchors on the past. Today I want to open the estate conversation gently without triggering avoidance.</textarea>
+        </div>
+        <button class="form-submit" onclick="showBriefOutput()">✦ Generate Pre-Meeting Brief</button>
+        <div class="output-section hidden" id="brief-output">
+          <div class="output-label">Pre-meeting brief — Sarah Johnson</div>
+          <div class="brief-output">
+            <div class="brief-section">
+              <div class="brief-sec-title">Emotional context</div>
+              <div class="brief-sec-body">Sarah is navigating grief and financial transition simultaneously. The inheritance feels emotionally loaded — accepting it may trigger guilt or feel like "benefiting" from loss. Avoidance is a protective response, not indifference.</div>
+            </div>
+            <div class="brief-section">
+              <div class="brief-sec-title">Likely triggers today</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+                <span class="brief-tag">Leading with numbers</span>
+                <span class="brief-tag">Future-focused language</span>
+                <span class="brief-tag">Moving too fast</span>
+                <span class="brief-tag watch">Any reference to "the estate"</span>
+              </div>
+            </div>
+            <div class="brief-section">
+              <div class="brief-sec-title">What's likely to work</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+                <span class="brief-tag soft">Open with the loss first</span>
+                <span class="brief-tag soft">Ask what her father wanted for her</span>
+                <span class="brief-tag soft">No agenda pressure today</span>
+              </div>
+            </div>
+            <div class="brief-section">
+              <div class="brief-sec-title">Suggested opening</div>
+              <div class="brief-sec-body" style="font-style:italic">"Before we talk about anything practical, how are you doing with everything around your father's passing? I want to make sure we're taking care of you, not just the paperwork."</div>
+            </div>
+            <div class="brief-section">
+              <div class="brief-sec-title">One resource to have ready</div>
+              <div class="brief-sec-body">The Psychology of Inherited Wealth — Talk by Dr. Sarah Newcomb (24 min). Section 2 covers inherited guilt specifically.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARCHETYPE panel -->
+      <div class="tool-panel" id="panel-archetype">
+        <div class="tool-header">
+          <div class="tool-back" onclick="showHome()">← Back to home</div>
+          <div class="tool-title">🪞 Client Archetype</div>
+          <div class="tool-desc">Answer questions about your client on their behalf. Lydia generates their behavioural money archetype and communication guide.</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Client name</div>
+          <input type="text" class="form-input" value="Sarah Johnson"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">When faced with a financial decision, this client typically...</div>
+          <select class="form-select"><option>Delays and avoids</option><option>Acts impulsively</option><option>Seeks lots of information first</option><option>Defers to others</option><option>Decides confidently</option></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Their primary emotional relationship with money is...</div>
+          <select class="form-select"><option>Anxiety and fear</option><option>Guilt or shame</option><option>Control and security</option><option>Freedom and possibility</option><option>Neutrality</option></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">In your experience, what does this client most want from you?</div>
+          <select class="form-select"><option>Reassurance and safety</option><option>Clear, decisive direction</option><option>To feel heard and understood</option><option>Education and knowledge</option><option>Freedom with guardrails</option></select>
+        </div>
+        <button class="form-submit" onclick="showArchetypeOutput()">✦ Generate Client Archetype</button>
+        <div class="output-section hidden" id="archetype-output">
+          <div class="output-label">Client archetype — Sarah Johnson</div>
+          <div class="archetype-hero-out">
+            <div class="arch-icon">🌫️</div>
+            <div class="arch-name">The Avoider</div>
+            <div class="arch-tagline">Money decisions feel heavy or anxiety-inducing. Sarah prefers not to engage — which means important decisions get delayed, and discomfort builds quietly over time.</div>
+          </div>
+          <div class="arch-traits">
+            <div class="arch-trait"><div class="trait-dot"></div><div class="trait-text"><strong>Communication style that works:</strong> slow down, name the discomfort directly, never rush toward a decision. She needs to feel safe before she can engage.</div></div>
+            <div class="arch-trait"><div class="trait-dot"></div><div class="trait-text"><strong>What she hears when you say "we need to decide":</strong> threat. Reframe decisions as explorations. "What feels right to look at first?" is more accessible than "we need to make a call on this."</div></div>
+            <div class="arch-trait"><div class="trait-dot"></div><div class="trait-text"><strong>Her core fear:</strong> making an irreversible mistake. Acknowledge that mistakes are survivable and reversibility is a real thing you can build into decisions together.</div></div>
+            <div class="arch-trait"><div class="trait-dot"></div><div class="trait-text"><strong>The thing that builds trust fastest:</strong> not pushing. Every time you sit with her avoidance rather than trying to fix it, her trust in you deepens by a measurable degree.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btm">
+      <div class="btm-row">
+        <span class="attach">📎</span>
+        <input class="btm-inp" type="text" placeholder="Ask Lydia about a client's behaviour, conversation prep, or a money story..."/>
+        <button class="btm-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="btm-meta">
+        <span>✦ Grounded in behavioural science</span>
+        <span>🔒 End-to-end encrypted</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-head">
+      <div class="right-title">📚 Shaping Wealth Library</div>
+      <div class="filter-row">
+        <div class="filter on">All</div>
+        <div class="filter">Video</div>
+        <div class="filter">PDF</div>
+        <div class="filter">Talk</div>
+        <div class="filter">Framework</div>
+      </div>
+    </div>
+    <div class="right-scroll">
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">The Psychology of Inherited Wealth</div><div class="lc-type talk">Talk</div></div><div class="lc-meta">Dr. Sarah Newcomb · 24 min · Summit 2024</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Loss Aversion — Advisor Playbook</div><div class="lc-type pdf">PDF</div></div><div class="lc-meta">Shaping Wealth · 18 pages · 2024</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">How to Uncover a Client's Money Story</div><div class="lc-type video">Video</div></div><div class="lc-meta">Shaping Wealth · 31 min · Masterclass</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">The MAPS Framework for Life Transitions</div><div class="lc-type framework">Framework</div></div><div class="lc-meta">Shaping Wealth · Core methodology</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Navigating Couples & Money Conflict</div><div class="lc-type video">Video</div></div><div class="lc-meta">Shaping Wealth · 19 min · Advisor Series</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Sudden Wealth Syndrome — Field Guide</div><div class="lc-type pdf">PDF</div></div><div class="lc-meta">Shaping Wealth · 12 pages · 2023</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Grief, Loss & Financial Decision-Making</div><div class="lc-type article">Article</div></div><div class="lc-meta">Shaping Wealth · 8 min read</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Roleplay Scenarios — Starter Pack</div><div class="lc-type pdf">PDF</div></div><div class="lc-meta">Shaping Wealth · 22 pages</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Financial Anxiety — Advisor Toolkit</div><div class="lc-type pdf">PDF</div></div><div class="lc-meta">Shaping Wealth · 14 pages · 2024</div></div>
+      <div class="lib-card"><div class="lc-top"><div class="lc-title">Endowment Effect in Client Conversations</div><div class="lc-type article">Article</div></div><div class="lc-meta">Shaping Wealth · 6 min read</div></div>
+    </div>
+    <div class="right-foot">
+      <div class="right-foot-note">Shaping Wealth content — curated for behavioural advisors</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const panels = ['home','roleplay','moneystory','lifeguide','starter','bias','brief','archetype'];
+
+function showHome() {
+  panels.forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById('panel-home').classList.add('active');
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('center-scroll').scrollTop = 0;
+}
+
+function activatePill(name) {
+  panels.forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if (el) el.classList.remove('active');
+  });
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-'+name);
+  const pill = document.getElementById('pill-'+name);
+  if (panel) panel.classList.add('active');
+  if (pill) pill.classList.add('active');
+  document.getElementById('center-scroll').scrollTop = 0;
+}
+
+function showStarterOutput() {
+  document.getElementById('starter-output').classList.remove('hidden');
+  setTimeout(() => document.getElementById('starter-output').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function showBiasOutput() {
+  document.getElementById('bias-output').classList.remove('hidden');
+  setTimeout(() => document.getElementById('bias-output').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function showBriefOutput() {
+  document.getElementById('brief-output').classList.remove('hidden');
+  setTimeout(() => document.getElementById('brief-output').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function showArchetypeOutput() {
+  document.getElementById('archetype-output').classList.remove('hidden');
+  setTimeout(() => document.getElementById('archetype-output').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function showRoleplayOutput() {
+  document.getElementById('roleplay-output').classList.remove('hidden');
+  setTimeout(() => document.getElementById('roleplay-output').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+</script>
+</body>
+</html>
