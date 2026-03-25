@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lydia v3 — Behavioural Intelligence Co-pilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3B4FC8;
+  --purple:#B060C8;
+  --grad:linear-gradient(135deg,#3B4FC8 0%,#7B52C8 50%,#C060C8 100%);
+  --w:#fff;
+  --w90:rgba(255,255,255,.9);
+  --w70:rgba(255,255,255,.7);
+  --w50:rgba(255,255,255,.5);
+  --w30:rgba(255,255,255,.3);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --w08:rgba(255,255,255,.08);
+  --lav:rgba(180,160,255,.9);
+  --lav-dim:rgba(180,160,255,.2);
+  --font:'Montserrat',sans-serif;
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--grad);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* ── TOP NAV ─────────────────────────────────────────────────────────── */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.5rem;height:52px;flex-shrink:0;
+  background:rgba(0,0,0,.18);border-bottom:1px solid var(--w12);
+  backdrop-filter:blur(10px);
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{
+  width:30px;height:30px;border-radius:50%;
+  border:1.5px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-mark svg{width:16px;height:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--w);letter-spacing:.01em}
+.brand-sub{
+  font-size:10px;font-weight:500;color:var(--w50);
+  letter-spacing:.08em;text-transform:uppercase;
+  border-left:1px solid var(--w20);padding-left:10px;margin-left:4px
+}
+.topnav-right{display:flex;align-items:center;gap:12px}
+.icon-btn{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--w12);border:1px solid var(--w20);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;transition:background .2s
+}
+.icon-btn:hover{background:var(--w20)}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--w20);border:2px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--w);cursor:pointer
+}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────── */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── LEFT PANE — pure chat history ──────────────────────────────────── */
+.left{
+  width:232px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--w12);
+  background:rgba(0,0,0,.16);
+}
+.left-top{padding:1rem 1rem .75rem;flex-shrink:0}
+.new-chat{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:10px;
+  background:var(--w);color:var(--blue);
+  border:none;border-radius:var(--r);
+  font-family:var(--font);font-size:12px;font-weight:700;
+  cursor:pointer;transition:opacity .2s;margin-bottom:.9rem
+}
+.new-chat:hover{opacity:.9}
+.search{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:var(--r);
+  background:var(--w08);border:1px solid var(--w12);
+}
+.search input{
+  background:none;border:none;outline:none;
+  font-family:var(--font);font-size:11px;color:var(--w);width:100%
+}
+.search input::placeholder{color:var(--w50)}
+.search-ico{font-size:12px;color:var(--w50)}
+.left-scroll{flex:1;overflow-y:auto;padding:0 .75rem .75rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.hist-group{margin-bottom:1rem}
+.hist-date{
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--w30);padding:8px 6px 6px;
+}
+.hist-item{
+  padding:8px 10px;border-radius:8px;
+  font-size:12px;font-weight:400;color:var(--w70);
+  cursor:pointer;transition:background .2s,color .2s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  line-height:1.4;
+}
+.hist-item:hover{background:var(--w08);color:var(--w90)}
+.hist-item.active{background:var(--w20);color:var(--w);font-weight:500}
+.left-foot{
+  padding:.75rem 1rem 1rem;
+  border-top:1px solid var(--w12);
+  display:flex;flex-direction:column;gap:4px
+}
+.foot-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 10px;border-radius:8px;
+  font-size:11px;font-weight:500;color:var(--w50);
+  cursor:pointer;transition:background .2s,color .2s
+}
+.foot-item:hover{background:var(--w08);color:var(--w70)}
+.foot-ico{font-size:14px;width:18px;text-align:center}
+.cap-wrap{
+  margin-top:6px;padding:8px 10px;
+  background:var(--w08);border-radius:var(--r)
+}
+.cap-row{
+  display:flex;justify-content:space-between;
+  font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--w50);margin-bottom:6px
+}
+.cap-track{height:3px;background:var(--w20);border-radius:3px}
+.cap-fill{height:100%;width:72%;background:var(--w);border-radius:3px}
+
+/* ── CENTER PANE ─────────────────────────────────────────────────────── */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.center-scroll{flex:1;overflow-y:auto;padding:2rem 2.5rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+
+/* hero card */
+.hero{
+  background:var(--grad);border-radius:var(--r-lg);
+  padding:2.5rem 2.5rem 2rem;text-align:center;
+  margin-bottom:1.75rem;position:relative;overflow:hidden;
+  border:1px solid var(--w20);
+}
+.hero::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero::after{content:'';position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-h{font-size:28px;font-weight:700;color:var(--w);margin-bottom:6px;letter-spacing:-.01em;position:relative;z-index:1}
+.hero-h span{color:rgba(255,255,255,.7)}
+.hero-sub{font-size:13px;color:var(--w70);line-height:1.6;margin-bottom:1.75rem;font-weight:400;position:relative;z-index:1}
+.pills{display:flex;justify-content:center;gap:10px;margin-bottom:1.75rem;position:relative;z-index:1;flex-wrap:wrap}
+.pill{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;background:var(--w20);border:1px solid var(--w50);
+  border-radius:100px;font-size:12px;font-weight:600;color:var(--w);
+  cursor:pointer;transition:background .2s,color .2s
+}
+.pill:hover{background:var(--w);color:var(--blue)}
+.hero-input{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.95);border-radius:var(--r);
+  padding:4px 4px 4px 16px;position:relative;z-index:1;
+  max-width:640px;margin:0 auto
+}
+.hero-input input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--font);font-size:14px;color:#333;padding:10px 0
+}
+.hero-input input::placeholder{color:#aaa}
+.send{
+  width:40px;height:40px;border-radius:8px;
+  background:var(--blue);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;flex-shrink:0
+}
+.send:hover{background:var(--purple)}
+.send svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* briefing */
+.briefing{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);
+  padding:1.25rem;margin-bottom:1.75rem;
+  display:flex;align-items:flex-start;gap:1rem
+}
+.brief-av{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--w20);border:1.5px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0
+}
+.brief-kicker{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--w50);margin-bottom:6px}
+.brief-text{font-size:12px;font-style:italic;color:var(--w90);line-height:1.65;margin-bottom:8px;font-weight:400}
+.brief-link{font-size:11px;font-weight:700;color:var(--lav);cursor:pointer}
+
+/* section label */
+.sec{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w50);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.sec::before{content:'';width:14px;height:2px;background:var(--w50);border-radius:2px}
+
+/* capability grid */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.75rem}
+.cap-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);
+  padding:1.25rem;cursor:pointer;
+  transition:background .2s,border-color .2s,transform .2s
+}
+.cap-card:hover{background:var(--w12);border-color:var(--w20);transform:translateY(-2px)}
+.cap-ico{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--w12);border:1px solid var(--w20);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:.9rem
+}
+.cap-t{font-size:13px;font-weight:700;color:var(--w);margin-bottom:4px}
+.cap-d{font-size:11px;color:var(--w50);line-height:1.55;font-weight:400}
+
+/* starter questions */
+.sq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.75rem}
+.sq{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1.1rem 1.25rem;cursor:pointer;
+  transition:background .2s,border-color .2s
+}
+.sq:hover{background:var(--w12);border-color:var(--w20)}
+.sq-q{font-size:12px;font-weight:500;color:var(--w90);line-height:1.55;margin-bottom:8px}
+.sq-a{font-size:11px;font-weight:700;color:var(--lav)}
+
+/* bottom bar */
+.btm{
+  padding:1rem 1.5rem;border-top:1px solid var(--w12);
+  background:rgba(0,0,0,.12);flex-shrink:0
+}
+.btm-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);
+  padding:4px 4px 4px 14px
+}
+.attach{font-size:16px;color:var(--w50);cursor:pointer;padding:0 4px}
+.btm-input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--font);font-size:13px;color:var(--w);padding:8px 0
+}
+.btm-input::placeholder{color:var(--w50)}
+.btm-send{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--blue);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;flex-shrink:0
+}
+.btm-send:hover{background:var(--purple)}
+.btm-send svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.btm-meta{display:flex;justify-content:center;gap:1.5rem;margin-top:8px}
+.btm-meta span{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+
+/* ── RIGHT PANE — contextual ─────────────────────────────────────────── */
+.right{
+  width:256px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--w12);
+  background:rgba(0,0,0,.16);
+}
+.right-scroll{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.r-sec{margin-bottom:1.5rem}
+.r-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--w50);margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between
+}
+.r-lbl-link{font-size:9px;font-weight:700;color:var(--lav);cursor:pointer;letter-spacing:.06em}
+
+/* resource items */
+.res{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r);
+  background:var(--w08);border:1px solid var(--w12);
+  margin-bottom:8px;cursor:pointer;
+  transition:background .2s,border-color .2s
+}
+.res:hover{background:var(--w12);border-color:var(--w20)}
+.res-ico{
+  width:32px;height:32px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0
+}
+.res-ico.g{background:rgba(168,85,247,.18)}
+.res-ico.s{background:rgba(59,130,246,.18)}
+.res-ico.m{background:rgba(234,179,8,.18)}
+.res-ico.r{background:rgba(34,197,94,.18)}
+.res-t{font-size:11px;font-weight:600;color:var(--w90);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:148px}
+.res-m{font-size:10px;color:var(--w50);font-weight:400}
+
+/* ai suggestion cards */
+.sug{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1rem;margin-bottom:10px
+}
+.sug-kick{
+  font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--lav);margin-bottom:6px;display:flex;align-items:center;gap:6px
+}
+.sug-kick::before{content:'✦';font-size:8px}
+.sug-body{font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:8px;font-weight:400}
+.sug-cta{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--lav);cursor:pointer;transition:color .2s}
+.sug-cta:hover{color:var(--w)}
+
+/* client pulse */
+.pulse{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1rem;margin-bottom:10px
+}
+.pulse-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pulse-name{font-size:12px;font-weight:700;color:var(--w)}
+.pulse-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.06em}
+.pulse-badge.hi{background:rgba(251,146,60,.2);color:rgba(251,146,60,.95)}
+.pulse-badge.ok{background:rgba(74,222,128,.15);color:rgba(74,222,128,.9)}
+.pulse-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.pulse-trait{font-size:10px;color:var(--w50);font-weight:500}
+.pulse-bar{width:80px;height:4px;background:var(--w20);border-radius:3px}
+.pulse-fill{height:100%;border-radius:3px}
+.pulse-fill.warm{background:linear-gradient(90deg,rgba(251,146,60,.8),rgba(239,68,68,.8))}
+.pulse-fill.cool{background:linear-gradient(90deg,var(--blue),var(--purple))}
+.pulse-note{font-size:10px;color:var(--w50);font-style:italic;line-height:1.5;padding-top:8px;border-top:1px solid var(--w12);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5"/>
+        <path d="M7 10C7 10 8.5 13 10 13C11.5 13 13 10 13 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Lydia</span>
+    <span class="brand-sub">Behavioural Intelligence Co-pilot</span>
+  </div>
+  <div class="topnav-right">
+    <div class="icon-btn">🔔</div>
+    <div class="icon-btn">⚙️</div>
+    <div class="avatar">AM</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── LEFT PANE ───────────────────────────────────────────────────── -->
+  <div class="left">
+    <div class="left-top">
+      <button class="new-chat">✦ New Conversation</button>
+      <div class="search">
+        <span class="search-ico">🔍</span>
+        <input type="text" placeholder="Search conversations..."/>
+      </div>
+    </div>
+
+    <div class="left-scroll">
+      <div class="hist-group">
+        <div class="hist-date">Today</div>
+        <div class="hist-item active">Inheritance conversation — Sarah J.</div>
+        <div class="hist-item">How to open a loss aversion talk</div>
+      </div>
+      <div class="hist-group">
+        <div class="hist-date">Yesterday</div>
+        <div class="hist-item">Money story: avoidant client type</div>
+        <div class="hist-item">EQ coaching for new hire prep</div>
+        <div class="hist-item">Adult children & estate framing</div>
+      </div>
+      <div class="hist-group">
+        <div class="hist-date">This week</div>
+        <div class="hist-item">Divorce transition conversation</div>
+        <div class="hist-item">Anchoring bias — client script</div>
+        <div class="hist-item">Present bias: spending patterns</div>
+        <div class="hist-item">Financial anxiety check-in prep</div>
+        <div class="hist-item">Roleplay: resistant guardian type</div>
+      </div>
+      <div class="hist-group">
+        <div class="hist-date">Last week</div>
+        <div class="hist-item">Endowment effect — how to frame</div>
+        <div class="hist-item">Couple values misalignment case</div>
+        <div class="hist-item">Grief & money — widow client</div>
+        <div class="hist-item">Sudden wealth syndrome guide</div>
+      </div>
+    </div>
+
+    <div class="left-foot">
+      <div class="foot-item"><span class="foot-ico">❓</span> Help Centre</div>
+      <div class="foot-item"><span class="foot-ico">↪</span> Log Out</div>
+      <div class="cap-wrap">
+        <div class="cap-row"><span>Lydia Pro</span><span>72% used</span></div>
+        <div class="cap-track"><div class="cap-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CENTER PANE ─────────────────────────────────────────────────── -->
+  <div class="center">
+    <div class="center-scroll">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-h">Hi Amy, how can I <span>help today?</span></div>
+        <p class="hero-sub">Take full advantage of Shaping Wealth's behavioral intelligence ecosystem:<br/>know-how, content, collaboration, and guidance.</p>
+        <div class="pills">
+          <div class="pill">🎭 Roleplay</div>
+          <div class="pill">📖 Money Story</div>
+          <div class="pill">🧭 Financial Life Guide</div>
+        </div>
+        <div class="hero-input">
+          <input type="text" placeholder="Ask me anything!"/>
+          <button class="send">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MORNING BRIEFING -->
+      <div class="briefing">
+        <div class="brief-av">👩‍💼</div>
+        <div>
+          <div class="brief-kicker">🌅 Morning Briefing</div>
+          <div class="brief-text">"Lydia Insight: Sarah Johnson's recent responses suggest rising loss-aversion. Consider opening with the 'Peace of Mind' framing before your 2 PM conversation — and avoid leading with performance data."</div>
+          <div class="brief-link">Review full briefing →</div>
+        </div>
+      </div>
+
+      <!-- CAPABILITIES -->
+      <div class="sec">What Lydia can do</div>
+      <div class="cap-grid">
+        <div class="cap-card">
+          <div class="cap-ico">🎭</div>
+          <div class="cap-t">Roleplay</div>
+          <div class="cap-d">Practice difficult client conversations in a safe, AI-guided environment</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">📖</div>
+          <div class="cap-t">Money Story</div>
+          <div class="cap-d">Uncover the psychological roots of your client's relationship with wealth</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🧭</div>
+          <div class="cap-t">Financial Life Guide</div>
+          <div class="cap-d">Strategic roadmaps for major life transitions and family governance</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🧠</div>
+          <div class="cap-t">Behavioural Biases</div>
+          <div class="cap-d">Identify and navigate loss aversion, anchoring, present bias and more</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">💬</div>
+          <div class="cap-t">Conversation Prep</div>
+          <div class="cap-d">Build emotionally intelligent scripts before difficult client meetings</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🤝</div>
+          <div class="cap-t">Family Dynamics</div>
+          <div class="cap-d">Navigate inheritance, multi-generational conversations, and values alignment</div>
+        </div>
+      </div>
+
+      <!-- STARTER QUESTIONS -->
+      <div class="sec">Get started with a question</div>
+      <div class="sq-grid">
+        <div class="sq">
+          <div class="sq-q">"My new young hire needs an EQ boost to handle high-net-worth calls. Any ideas?"</div>
+          <div class="sq-a">Start Coaching →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"I'm overwhelmed navigating emotional client reactions this quarter."</div>
+          <div class="sq-a">Simplify View →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"I need to connect better with my client's adult children regarding inheritance."</div>
+          <div class="sq-a">Bridge Gap →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"Help me understand why my client keeps avoiding estate planning conversations."</div>
+          <div class="sq-a">Explore Pattern →</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM INPUT -->
+    <div class="btm">
+      <div class="btm-row">
+        <span class="attach">📎</span>
+        <input class="btm-input" type="text" placeholder="Ask Lydia about a client's behaviour, prepare for a conversation, or explore a money story..."/>
+        <button class="btm-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="btm-meta">
+        <span>✦ Grounded in behavioural science</span>
+        <span>🔒 End-to-end encrypted</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANE — contextual ────────────────────────────────────── -->
+  <div class="right">
+    <div class="right-scroll">
+
+      <!-- RESOURCES -->
+      <div class="r-sec">
+        <div class="r-lbl">📁 Resources <span class="r-lbl-link">SEE ALL</span></div>
+        <div class="res">
+          <div class="res-ico g">📘</div>
+          <div>
+            <div class="res-t">Inheritance Conversation Guide</div>
+            <div class="res-m">Used 2h ago</div>
+          </div>
+        </div>
+        <div class="res">
+          <div class="res-ico s">💬</div>
+          <div>
+            <div class="res-t">Loss Aversion Scripts v3</div>
+            <div class="res-m">Updated yesterday</div>
+          </div>
+        </div>
+        <div class="res">
+          <div class="res-ico m">📖</div>
+          <div>
+            <div class="res-t">Money Story — Avoider Type</div>
+            <div class="res-m">3 days ago</div>
+          </div>
+        </div>
+        <div class="res">
+          <div class="res-ico r">🎭</div>
+          <div>
+            <div class="res-t">Roleplay Debrief: Divorce</div>
+            <div class="res-m">Last week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI SUGGESTIONS -->
+      <div class="r-sec">
+        <div class="r-lbl">✦ AI Suggestions</div>
+        <div class="sug">
+          <div class="sug-kick">Prompt for Sarah</div>
+          <div class="sug-body">"How have your feelings about your children's financial future changed after recent conversations with them?"</div>
+          <div class="sug-cta">Copy Prompt</div>
+        </div>
+        <div class="sug">
+          <div class="sug-kick">Behavioural Nudge</div>
+          <div class="sug-body">Client X shows strong present-bias signals. Try anchoring the conversation on a near-term milestone rather than long-term outcomes.</div>
+          <div class="sug-cta">View Technique</div>
+        </div>
+        <div class="sug">
+          <div class="sug-kick">Roleplay Suggestion</div>
+          <div class="sug-body">Practice the 'avoidant client' scenario before your next session — Lydia has detected similar patterns with this profile.</div>
+          <div class="sug-cta">Start Roleplay</div>
+        </div>
+      </div>
+
+      <!-- CLIENT PULSE -->
+      <div class="r-sec">
+        <div class="r-lbl">🧠 Client Pulse</div>
+        <div class="pulse">
+          <div class="pulse-head">
+            <div class="pulse-name">Sarah Johnson</div>
+            <div class="pulse-badge hi">Elevated Anxiety</div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Loss Aversion</div>
+            <div class="pulse-bar"><div class="pulse-fill warm" style="width:85%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Avoidance</div>
+            <div class="pulse-bar"><div class="pulse-fill warm" style="width:68%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Trust Level</div>
+            <div class="pulse-bar"><div class="pulse-fill cool" style="width:62%"></div></div>
+          </div>
+          <div class="pulse-note">Open with values alignment today — avoid performance framing until trust signals improve.</div>
+        </div>
+        <div class="pulse">
+          <div class="pulse-head">
+            <div class="pulse-name">Marcus Webb</div>
+            <div class="pulse-badge ok">Stable</div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Openness</div>
+            <div class="pulse-bar"><div class="pulse-fill cool" style="width:74%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Anchoring Risk</div>
+            <div class="pulse-bar"><div class="pulse-fill warm" style="width:40%"></div></div>
+          </div>
+          <div class="pulse-row">
+            <div class="pulse-trait">Trust Level</div>
+            <div class="pulse-bar"><div class="pulse-fill cool" style="width:80%"></div></div>
+          </div>
+          <div class="pulse-note">Good session conditions. Marcus is in a receptive state — solid moment to explore life transition goals.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
