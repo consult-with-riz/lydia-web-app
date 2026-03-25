@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lydia — Intelligent Wealth Co-pilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3B4FC8;
+  --purple:#B060C8;
+  --grad:linear-gradient(135deg,#3B4FC8 0%,#7B52C8 50%,#C060C8 100%);
+  --w:#fff;
+  --w90:rgba(255,255,255,.9);
+  --w70:rgba(255,255,255,.7);
+  --w50:rgba(255,255,255,.5);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --w08:rgba(255,255,255,.08);
+  --w05:rgba(255,255,255,.05);
+  --font:'Montserrat',sans-serif;
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--grad);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* TOP NAV */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.5rem;height:52px;flex-shrink:0;
+  background:rgba(255,255,255,.07);border-bottom:1px solid var(--w12);
+  backdrop-filter:blur(8px);
+}
+.topnav-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{
+  width:30px;height:30px;border-radius:50%;
+  border:1.5px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-logo svg{width:16px;height:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--w);letter-spacing:0.01em}
+.brand-tag{font-size:10px;font-weight:500;color:var(--w50);letter-spacing:0.08em;text-transform:uppercase;border-left:1px solid var(--w20);padding-left:10px;margin-left:4px}
+.topnav-nav{display:flex;gap:2rem}
+.topnav-nav a{font-size:12px;font-weight:600;color:var(--w50);text-decoration:none;letter-spacing:0.04em;padding:4px 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.topnav-nav a.active{color:var(--w);border-bottom-color:var(--w)}
+.topnav-right{display:flex;align-items:center;gap:14px}
+.icon-btn{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--w12);border:1px solid var(--w20);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:14px;transition:background .2s
+}
+.icon-btn:hover{background:var(--w20)}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--w20);border:2px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--w);cursor:pointer
+}
+
+/* MAIN LAYOUT */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT PANE */
+.left-pane{
+  width:240px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--w12);
+  background:rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.left-pane-inner{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.new-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:10px;margin-bottom:1.25rem;
+  background:var(--w);color:var(--blue);
+  border:none;border-radius:var(--r);
+  font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;
+  transition:opacity .2s
+}
+.new-btn:hover{opacity:.9}
+.pane-section{margin-bottom:1.25rem}
+.pane-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--w50);margin-bottom:8px;padding:0 4px}
+.pane-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r);
+  font-size:12px;font-weight:500;color:var(--w70);
+  cursor:pointer;transition:background .2s,color .2s;
+  text-decoration:none;
+}
+.pane-item:hover{background:var(--w08);color:var(--w)}
+.pane-item.active{background:var(--w20);color:var(--w);font-weight:600}
+.pane-item-ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.history-item{
+  padding:7px 10px;border-radius:8px;
+  font-size:11px;font-weight:400;color:var(--w50);
+  cursor:pointer;transition:background .2s,color .2s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:8px
+}
+.history-item:hover{background:var(--w08);color:var(--w70)}
+.history-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--w20);flex-shrink:0}
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:var(--r);
+  background:var(--w08);border:1px solid var(--w12);
+  margin-bottom:1rem;
+}
+.search-box input{
+  background:none;border:none;outline:none;
+  font-family:var(--font);font-size:11px;color:var(--w);width:100%;
+}
+.search-box input::placeholder{color:var(--w50)}
+.search-ico{font-size:12px;color:var(--w50)}
+.left-bottom{
+  padding:1rem;border-top:1px solid var(--w12);
+  display:flex;flex-direction:column;gap:4px
+}
+.capacity-bar-wrap{padding:8px 10px;background:var(--w08);border-radius:var(--r);margin-top:8px}
+.capacity-label{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--w50);margin-bottom:6px;display:flex;justify-content:space-between}
+.capacity-track{height:4px;background:var(--w20);border-radius:4px}
+.capacity-fill{height:100%;width:72%;background:var(--w);border-radius:4px}
+
+/* CENTER PANE */
+.center-pane{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;
+}
+.center-scroll{flex:1;overflow-y:auto;padding:2rem 2.5rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+
+/* HERO CARD */
+.hero-card{
+  background:var(--grad);
+  border-radius:var(--r-lg);padding:2.5rem 2.5rem 2rem;
+  text-align:center;margin-bottom:2rem;position:relative;overflow:hidden;
+  border:1px solid var(--w20);
+}
+.hero-card::before{
+  content:'';position:absolute;top:-60px;left:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.hero-card::after{
+  content:'';position:absolute;bottom:-40px;right:-40px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.hero-greeting{font-size:28px;font-weight:700;color:var(--w);margin-bottom:6px;letter-spacing:-0.01em;position:relative;z-index:1}
+.hero-greeting span{color:rgba(255,255,255,.75)}
+.hero-sub{font-size:13px;color:var(--w70);line-height:1.6;margin-bottom:1.75rem;font-weight:400;position:relative;z-index:1}
+.hero-pills{display:flex;justify-content:center;gap:10px;margin-bottom:1.75rem;position:relative;z-index:1;flex-wrap:wrap}
+.pill{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;background:var(--w20);border:1px solid var(--w50);
+  border-radius:100px;font-size:12px;font-weight:600;color:var(--w);
+  cursor:pointer;transition:background .2s;
+}
+.pill:hover{background:var(--w);color:var(--blue)}
+.pill-ico{font-size:14px}
+.hero-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.95);border-radius:var(--r);
+  padding:4px 4px 4px 16px;position:relative;z-index:1;max-width:640px;margin:0 auto
+}
+.hero-input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--font);font-size:14px;color:#333;
+  padding:10px 0
+}
+.hero-input::placeholder{color:#aaa}
+.hero-send{
+  width:40px;height:40px;border-radius:8px;
+  background:var(--blue);border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .2s;flex-shrink:0
+}
+.hero-send:hover{background:var(--purple)}
+.hero-send svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* SECTION LABEL */
+.sec-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--w50);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'';width:14px;height:2px;background:var(--w50);border-radius:2px}
+
+/* CAPABILITY CARDS */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:2rem}
+.cap-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);
+  padding:1.25rem;cursor:pointer;transition:background .2s,border-color .2s,transform .2s
+}
+.cap-card:hover{background:var(--w12);border-color:var(--w20);transform:translateY(-2px)}
+.cap-ico{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--w12);border:1px solid var(--w20);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:0.9rem
+}
+.cap-t{font-size:13px;font-weight:700;color:var(--w);margin-bottom:4px}
+.cap-d{font-size:11px;color:var(--w50);line-height:1.55;font-weight:400}
+
+/* STARTER QUESTIONS */
+.starter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:2rem}
+.starter-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1.1rem 1.25rem;cursor:pointer;
+  transition:background .2s,border-color .2s
+}
+.starter-card:hover{background:var(--w12);border-color:var(--w20)}
+.starter-q{font-size:12px;font-weight:500;color:var(--w90);line-height:1.55;margin-bottom:8px}
+.starter-action{font-size:11px;font-weight:700;color:rgba(180,160,255,.9);display:flex;align-items:center;gap:4px}
+.starter-action::after{content:'→';transition:margin .2s}
+.starter-card:hover .starter-action::after{margin-left:4px}
+
+/* MORNING BRIEFING */
+.briefing-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r-lg);
+  padding:1.25rem;margin-bottom:2rem;display:flex;align-items:flex-start;gap:1rem
+}
+.briefing-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--w50);margin-bottom:6px}
+.briefing-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--w20);border:1.5px solid var(--w50);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0
+}
+.briefing-text{font-size:12px;font-style:italic;color:var(--w90);line-height:1.65;margin-bottom:8px;font-weight:400}
+.briefing-link{font-size:11px;font-weight:700;color:rgba(180,160,255,.9);cursor:pointer}
+
+/* BOTTOM INPUT BAR */
+.bottom-bar{
+  padding:1rem 1.5rem;border-top:1px solid var(--w12);
+  background:rgba(0,0,0,.1);flex-shrink:0
+}
+.bottom-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);
+  padding:4px 4px 4px 14px;max-width:100%
+}
+.bottom-attach{font-size:16px;color:var(--w50);cursor:pointer;padding:0 4px}
+.bottom-input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--font);font-size:13px;color:var(--w);padding:8px 0
+}
+.bottom-input::placeholder{color:var(--w50)}
+.bottom-send{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--blue);border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .2s;flex-shrink:0
+}
+.bottom-send:hover{background:var(--purple)}
+.bottom-send svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.bottom-meta{display:flex;justify-content:center;gap:1.5rem;margin-top:8px}
+.bottom-meta-item{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--w30,rgba(255,255,255,.3));display:flex;align-items:center;gap:5px}
+
+/* RIGHT PANE */
+.right-pane{
+  width:260px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--w12);
+  background:rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.right-pane-inner{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.right-section{margin-bottom:1.5rem}
+.right-label{
+  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--w50);margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between
+}
+.right-label-see{font-size:9px;font-weight:700;letter-spacing:0.06em;color:rgba(180,160,255,.8);cursor:pointer}
+
+/* DOC ITEMS */
+.doc-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:var(--r);
+  background:var(--w08);border:1px solid var(--w12);
+  margin-bottom:8px;cursor:pointer;transition:background .2s,border-color .2s
+}
+.doc-item:hover{background:var(--w12);border-color:var(--w20)}
+.doc-ico{
+  width:32px;height:32px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0
+}
+.doc-ico.pdf{background:rgba(239,68,68,.15)}
+.doc-ico.doc{background:rgba(59,130,246,.15)}
+.doc-ico.ppt{background:rgba(168,85,247,.15)}
+.doc-t{font-size:11px;font-weight:600;color:var(--w90);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.doc-m{font-size:10px;color:var(--w50);font-weight:400}
+
+/* AI SUGGESTION */
+.suggestion-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1rem;margin-bottom:10px
+}
+.sug-kicker{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(180,160,255,.9);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.sug-kicker::before{content:'✦';font-size:8px}
+.sug-text{font-size:11px;color:var(--w70);line-height:1.6;margin-bottom:8px;font-weight:400}
+.sug-btn{
+  font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  color:rgba(180,160,255,.9);cursor:pointer;transition:color .2s
+}
+.sug-btn:hover{color:var(--w)}
+
+/* MARKET CARD */
+.market-card{
+  background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);
+  padding:1rem;margin-bottom:10px
+}
+.market-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.market-name{font-size:12px;font-weight:700;color:var(--w)}
+.market-change{font-size:12px;font-weight:700;color:#4ade80}
+.market-sub{font-size:10px;color:var(--w50);font-weight:400;margin-bottom:10px}
+.market-bar-wrap{height:36px;position:relative;overflow:hidden;border-radius:6px;background:var(--w08)}
+.market-bars{display:flex;align-items:flex-end;height:100%;gap:2px;padding:4px 6px}
+.bar{flex:1;background:rgba(180,160,255,.5);border-radius:2px 2px 0 0}
+.bar.up{background:rgba(74,222,128,.6)}
+
+/* SENTIMENT */
+.sentiment-card{
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  border-radius:var(--r);padding:1rem;margin-bottom:10px
+}
+.sentiment-t{font-size:12px;font-weight:700;color:var(--w);margin-bottom:4px}
+.sentiment-v{font-size:22px;font-weight:700;color:var(--w);letter-spacing:-0.01em}
+.sentiment-d{font-size:10px;color:var(--w70);font-weight:400;margin-top:2px}
+.sentiment-pill{display:inline-block;margin-top:8px;padding:3px 10px;background:rgba(255,255,255,.2);border-radius:100px;font-size:10px;font-weight:700;color:var(--w);letter-spacing:0.04em}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="topnav-brand">
+    <div class="brand-logo">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5"/>
+        <path d="M7 10C7 10 8.5 13 10 13C11.5 13 13 10 13 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Lydia</span>
+    <span class="brand-tag">Intelligent Wealth Co-pilot</span>
+  </div>
+  <nav class="topnav-nav">
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Resources</a>
+    <a href="#">Market Insights</a>
+    <a href="#">Client Profiles</a>
+  </nav>
+  <div class="topnav-right">
+    <div class="icon-btn">🔔</div>
+    <div class="icon-btn">⚙️</div>
+    <div class="avatar">AM</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT PANE -->
+  <div class="left-pane">
+    <div class="left-pane-inner">
+      <button class="new-btn">
+        <span>✦</span> New Analysis
+      </button>
+
+      <div class="search-box">
+        <span class="search-ico">🔍</span>
+        <input type="text" placeholder="Search conversations..."/>
+      </div>
+
+      <div class="pane-section">
+        <div class="pane-label">Primary</div>
+        <div class="pane-item active">
+          <span class="pane-item-ico">🤖</span> AI Assistant
+        </div>
+        <div class="pane-item">
+          <span class="pane-item-ico">👥</span> Client Portfolios
+        </div>
+        <div class="pane-item">
+          <span class="pane-item-ico">📊</span> Behavioral Models
+        </div>
+        <div class="pane-item">
+          <span class="pane-item-ico">⚡</span> Strategy Builder
+        </div>
+        <div class="pane-item">
+          <span class="pane-item-ico">🧠</span> Client Insights
+        </div>
+      </div>
+
+      <div class="pane-section">
+        <div class="pane-label">History</div>
+        <div class="history-item">Portfolio rebalancing — Sarah J.</div>
+        <div class="history-item">Client meeting prep: Dilawar A.</div>
+        <div class="history-item">Tax-loss harvesting analysis</div>
+        <div class="history-item">Inheritance conversation guide</div>
+        <div class="history-item">Behavioural bias: loss aversion</div>
+        <div class="history-item">Retirement projection — 5% delta</div>
+        <div class="history-item">EQ framework for new hire</div>
+        <div class="history-item">Regulatory changes Q4 brief</div>
+        <div class="history-item">Draft client email — volatility</div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="pane-item">
+        <span class="pane-item-ico">❓</span> Help Center
+      </div>
+      <div class="pane-item">
+        <span class="pane-item-ico">↪</span> Log Out
+      </div>
+      <div class="capacity-bar-wrap">
+        <div class="capacity-label">
+          <span>Lydia Pro</span>
+          <span>72% used</span>
+        </div>
+        <div class="capacity-track">
+          <div class="capacity-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANE -->
+  <div class="center-pane">
+    <div class="center-scroll">
+
+      <!-- HERO CARD -->
+      <div class="hero-card">
+        <div class="hero-greeting">Hi Amy, how can I <span>help today?</span></div>
+        <p class="hero-sub">Take full advantage of Shaping Wealth's behavioral intelligence ecosystem:<br/>know-how, content, collaboration, and guidance.</p>
+        <div class="hero-pills">
+          <div class="pill"><span class="pill-ico">🎭</span> Roleplay</div>
+          <div class="pill"><span class="pill-ico">📖</span> Money Story</div>
+          <div class="pill"><span class="pill-ico">🧭</span> Financial Life Guide</div>
+        </div>
+        <div class="hero-input-wrap">
+          <input class="hero-input" type="text" placeholder="Ask me anything!"/>
+          <button class="hero-send">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MORNING BRIEFING -->
+      <div class="briefing-card">
+        <div class="briefing-avatar">👩‍💼</div>
+        <div>
+          <div class="briefing-label">🌅 Morning Briefing</div>
+          <div class="briefing-text">"Lydia Insight: Sarah Johnson's latest activity suggests a rise in loss-aversion. Consider sending the 'Market Volatility & Peace of Mind' guide before your 2 PM call."</div>
+          <div class="briefing-link">Review briefing details →</div>
+        </div>
+      </div>
+
+      <!-- CAPABILITIES -->
+      <div class="sec-label">What Lydia can do</div>
+      <div class="cap-grid">
+        <div class="cap-card">
+          <div class="cap-ico">📈</div>
+          <div class="cap-t">Market Outlook</div>
+          <div class="cap-d">Generate Q4 global equity summaries and client-ready market briefs</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">✉️</div>
+          <div class="cap-t">Draft Client Email</div>
+          <div class="cap-d">Explain portfolio shifts, market events, and advisor recommendations</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🧠</div>
+          <div class="cap-t">Behavioral Biases</div>
+          <div class="cap-d">Prep for emotionally complex client conversations with behavioral framing</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🎯</div>
+          <div class="cap-t">Retirement Projection</div>
+          <div class="cap-d">Run scenario models with inflation delta, life stage, and risk tolerance</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🎭</div>
+          <div class="cap-t">Practice Role Play</div>
+          <div class="cap-d">Simulate difficult client conversations in a safe AI-guided environment</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-ico">🗺️</div>
+          <div class="cap-t">Life Guide Roadmap</div>
+          <div class="cap-d">Strategic roadmaps for major transitions — inheritance, divorce, retirement</div>
+        </div>
+      </div>
+
+      <!-- STARTER QUESTIONS -->
+      <div class="sec-label">Get started with a question</div>
+      <div class="starter-grid">
+        <div class="starter-card">
+          <div class="starter-q">"My new young hire needs an EQ boost to handle high-net-worth calls. Any ideas?"</div>
+          <div class="starter-action">Start Coaching</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"I'm completely overwhelmed by the regulatory changes this quarter..."</div>
+          <div class="starter-action">Simplify View</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"I need to connect better with my client's adult children regarding inheritance."</div>
+          <div class="starter-action">Bridge Gap</div>
+        </div>
+        <div class="starter-card">
+          <div class="starter-q">"Explain the relationship between market volatility and loss aversion simply."</div>
+          <div class="starter-action">View Insight</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM INPUT -->
+    <div class="bottom-bar">
+      <div class="bottom-input-wrap">
+        <span class="bottom-attach">📎</span>
+        <input class="bottom-input" type="text" placeholder="Ask Lydia anything about your clients, portfolios, or behavioural finance..."/>
+        <button class="bottom-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="bottom-meta">
+        <div class="bottom-meta-item">✦ AI insights verified by compliance</div>
+        <div class="bottom-meta-item">🔒 End-to-end data encryption</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANE -->
+  <div class="right-pane">
+    <div class="right-pane-inner">
+
+      <!-- RECENT DOCUMENTS -->
+      <div class="right-section">
+        <div class="right-label">
+          📁 Recent Documents
+          <span class="right-label-see">SEE ALL</span>
+        </div>
+        <div class="doc-item">
+          <div class="doc-ico pdf">📄</div>
+          <div>
+            <div class="doc-t">Q4_Market_Outlook.pdf</div>
+            <div class="doc-m">Modified 2h ago</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-ico doc">📝</div>
+          <div>
+            <div class="doc-t">Client_Risk_Profile_V2.docx</div>
+            <div class="doc-m">Modified Yesterday</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-ico ppt">📊</div>
+          <div>
+            <div class="doc-t">Behavioral_Assessment_Oct.pdf</div>
+            <div class="doc-m">Modified 3 days ago</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-ico doc">📝</div>
+          <div>
+            <div class="doc-t">Retirement_Roadmap_SJ.docx</div>
+            <div class="doc-m">Modified last week</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI SUGGESTIONS -->
+      <div class="right-section">
+        <div class="right-label">✦ AI Suggestions</div>
+
+        <div class="suggestion-card">
+          <div class="sug-kicker">Prompts for Sarah</div>
+          <div class="sug-text">"How have your goals for your grandchildren's education evolved after the recent market shift?"</div>
+          <div class="sug-btn">Copy Prompt</div>
+        </div>
+
+        <div class="suggestion-card">
+          <div class="sug-kicker">Behavioral Nudge</div>
+          <div class="sug-text">Consider reviewing clients with over 15% allocation in long-duration bonds given recent yield shifts.</div>
+          <div class="sug-btn">View Affected Clients</div>
+        </div>
+
+        <div class="suggestion-card">
+          <div class="sug-kicker">Annuity Model Alert</div>
+          <div class="sug-text">Use the 'Annuity Ladder' visualizer to mitigate the 'Endowment Effect' observed in client X.</div>
+          <div class="sug-btn">View Model</div>
+        </div>
+      </div>
+
+      <!-- MARKET -->
+      <div class="right-section">
+        <div class="right-label">📊 Market Snapshot</div>
+        <div class="market-card">
+          <div class="market-row">
+            <div class="market-name">S&P 500 Index</div>
+            <div class="market-change">+1.24%</div>
+          </div>
+          <div class="market-sub">Real-time via Market Insights</div>
+          <div class="market-bar-wrap">
+            <div class="market-bars">
+              <div class="bar" style="height:40%"></div>
+              <div class="bar" style="height:55%"></div>
+              <div class="bar up" style="height:45%"></div>
+              <div class="bar up" style="height:70%"></div>
+              <div class="bar" style="height:60%"></div>
+              <div class="bar up" style="height:80%"></div>
+              <div class="bar up" style="height:75%"></div>
+              <div class="bar up" style="height:90%"></div>
+              <div class="bar up" style="height:85%"></div>
+              <div class="bar up" style="height:100%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sentiment-card">
+          <div class="sentiment-t">Market Sentiment</div>
+          <div class="sentiment-v">Cautious</div>
+          <div class="sentiment-d">Volatility index elevated — advisor alert active</div>
+          <div class="sentiment-pill">View Full Report →</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
