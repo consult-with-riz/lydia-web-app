@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lydia MVP v2 — Shaping Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3B4FC8;
+  --purple:#B060C8;
+  --grad:linear-gradient(135deg,#3B4FC8 0%,#7B52C8 50%,#C060C8 100%);
+  --w:#fff;
+  --w90:rgba(255,255,255,.9);
+  --w70:rgba(255,255,255,.7);
+  --w50:rgba(255,255,255,.5);
+  --w30:rgba(255,255,255,.3);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --w08:rgba(255,255,255,.08);
+  --lav:rgba(180,160,255,.95);
+  --lav-dim:rgba(180,160,255,.12);
+  --lav-border:rgba(180,160,255,.3);
+  --font:'Montserrat',sans-serif;
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--grad);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:52px;flex-shrink:0;background:rgba(0,0,0,.18);border-bottom:1px solid var(--w12);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--w50);display:flex;align-items:center;justify-content:center}
+.brand-mark svg{width:16px;height:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--w)}
+.brand-sub{font-size:10px;font-weight:500;color:var(--w50);letter-spacing:.08em;text-transform:uppercase;border-left:1px solid var(--w20);padding-left:10px;margin-left:4px}
+.nav-r{display:flex;align-items:center;gap:12px}
+.icon-btn{width:32px;height:32px;border-radius:8px;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:background .2s}
+.icon-btn:hover{background:var(--w20)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--w20);border:2px solid var(--w50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--w);cursor:pointer}
+.state-toggle{display:flex;gap:0;background:var(--w12);border:1px solid var(--w20);border-radius:8px;overflow:hidden}
+.tog{padding:6px 14px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--w50);background:none;border:none;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.tog.active{background:var(--w20);color:var(--w)}
+
+/* LAYOUT */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* LEFT */
+.left{width:228px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--w12);background:rgba(0,0,0,.16)}
+.left-top{padding:1rem 1rem .75rem;flex-shrink:0}
+.new-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:var(--w);color:var(--blue);border:none;border-radius:var(--r);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-bottom:.9rem}
+.new-btn:hover{opacity:.9}
+.search{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:var(--w08);border:1px solid var(--w12)}
+.search input{background:none;border:none;outline:none;font-family:var(--font);font-size:11px;color:var(--w);width:100%}
+.search input::placeholder{color:var(--w50)}
+.left-scroll{flex:1;overflow-y:auto;padding:0 .75rem .75rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.hg{margin-bottom:1rem}
+.hd{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--w30);padding:8px 6px 5px}
+.hi{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:400;color:var(--w70);cursor:pointer;transition:background .2s,color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.hi:hover{background:var(--w08);color:var(--w90)}
+.hi.active{background:var(--w20);color:var(--w);font-weight:500}
+.left-foot{padding:.75rem 1rem 1rem;border-top:1px solid var(--w12);display:flex;flex-direction:column;gap:4px}
+.fi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;font-size:11px;font-weight:500;color:var(--w50);cursor:pointer;transition:background .2s,color .2s}
+.fi:hover{background:var(--w08);color:var(--w70)}
+
+/* CENTER */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── HOME STATE ── */
+.home-scroll{flex:1;overflow-y:auto;padding:2rem 2.5rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.hero{background:var(--grad);border-radius:var(--r-lg);padding:2.5rem 2.5rem 2rem;text-align:center;margin-bottom:1.75rem;position:relative;overflow:hidden;border:1px solid var(--w20)}
+.hero::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero::after{content:'';position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-h{font-size:28px;font-weight:700;color:var(--w);margin-bottom:6px;letter-spacing:-.01em;position:relative;z-index:1}
+.hero-h span{color:rgba(255,255,255,.7)}
+.hero-sub{font-size:13px;color:var(--w70);line-height:1.6;margin-bottom:1.75rem;font-weight:400;position:relative;z-index:1}
+.pills{display:flex;justify-content:center;gap:10px;margin-bottom:1.75rem;position:relative;z-index:1;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:7px;padding:8px 16px;background:var(--w20);border:1px solid var(--w50);border-radius:100px;font-size:12px;font-weight:600;color:var(--w);cursor:pointer;transition:background .2s,color .2s}
+.pill:hover{background:var(--w);color:var(--blue)}
+.hero-inp{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);border-radius:var(--r);padding:4px 4px 4px 16px;position:relative;z-index:1;max-width:600px;margin:0 auto}
+.hero-inp input{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:14px;color:#333;padding:10px 0}
+.hero-inp input::placeholder{color:#aaa}
+.send{width:40px;height:40px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.send:hover{background:var(--purple)}
+.send svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sec{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w50);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.sec::before{content:'';width:14px;height:2px;background:var(--w50);border-radius:2px}
+.sq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.sq{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:1.1rem 1.25rem;cursor:pointer;transition:background .2s,border-color .2s}
+.sq:hover{background:var(--w12);border-color:var(--w20)}
+.sq-q{font-size:12px;font-weight:500;color:var(--w90);line-height:1.55;margin-bottom:8px}
+.sq-a{font-size:11px;font-weight:700;color:var(--lav)}
+
+/* ── CONVERSATION STATE ── */
+.conv-scroll{flex:1;overflow-y:auto;padding:1.5rem 2rem;display:flex;flex-direction:column;gap:1.25rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+.conv-header{text-align:center;padding-bottom:.5rem;border-bottom:1px solid var(--w12);margin-bottom:.5rem}
+.conv-title{font-size:13px;font-weight:600;color:var(--w70)}
+.conv-date{font-size:10px;color:var(--w30);margin-top:3px;font-weight:400}
+
+/* messages */
+.msg{display:flex;gap:10px;align-items:flex-start;max-width:88%}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px}
+.msg-av.lydia{background:var(--grad);border:1.5px solid var(--w30);color:var(--w)}
+.msg-av.user{background:var(--w20);border:1.5px solid var(--w30);color:var(--w)}
+.msg-bubble{padding:12px 16px;border-radius:var(--r-lg);font-size:13px;line-height:1.65;font-weight:400}
+.msg.lydia .msg-bubble{background:var(--w12);border:1px solid var(--w20);color:var(--w90);border-radius:4px var(--r-lg) var(--r-lg) var(--r-lg)}
+.msg.user .msg-bubble{background:rgba(255,255,255,.18);border:1px solid var(--w30);color:var(--w);border-radius:var(--r-lg) 4px var(--r-lg) var(--r-lg)}
+.msg-time{font-size:10px;color:var(--w30);margin-top:5px;font-weight:400;padding:0 4px}
+.msg.user .msg-time{text-align:right}
+
+/* resource surfaced inline */
+.inline-resource{
+  margin-top:10px;
+  background:var(--lav-dim);border:1px solid var(--lav-border);
+  border-radius:var(--r);padding:10px 12px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:background .2s
+}
+.inline-resource:hover{background:rgba(180,160,255,.2)}
+.ir-ico{font-size:16px;flex-shrink:0}
+.ir-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lav);margin-bottom:3px}
+.ir-title{font-size:11px;font-weight:600;color:var(--w90)}
+.ir-meta{font-size:10px;color:var(--w50);font-weight:400;margin-top:1px}
+.ir-arrow{margin-left:auto;font-size:14px;color:var(--lav);flex-shrink:0}
+
+/* typing indicator */
+.typing{display:flex;align-items:center;gap:4px;padding:12px 16px}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--w50);animation:bounce .9s ease infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* bottom bar */
+.btm{padding:1rem 1.5rem;border-top:1px solid var(--w12);background:rgba(0,0,0,.12);flex-shrink:0}
+.btm-row{display:flex;align-items:center;gap:10px;background:var(--w12);border:1px solid var(--w20);border-radius:var(--r);padding:4px 4px 4px 14px}
+.attach{font-size:16px;color:var(--w50);cursor:pointer;padding:0 4px}
+.btm-inp{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:13px;color:var(--w);padding:8px 0}
+.btm-inp::placeholder{color:var(--w50)}
+.btm-send{width:36px;height:36px;border-radius:8px;background:var(--blue);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0}
+.btm-send:hover{background:var(--purple)}
+.btm-send svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.btm-meta{display:flex;justify-content:center;gap:1.5rem;margin-top:8px}
+.btm-meta span{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+
+/* RIGHT */
+.right{width:260px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--w12);background:rgba(0,0,0,.16)}
+.right-head{padding:1rem 1rem .75rem;flex-shrink:0;border-bottom:1px solid var(--w12)}
+.right-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w50);margin-bottom:.6rem}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.filter{padding:4px 10px;border-radius:100px;font-size:10px;font-weight:600;color:var(--w50);border:1px solid var(--w20);cursor:pointer;transition:all .2s}
+.filter:hover{border-color:var(--w50);color:var(--w70)}
+.filter.on{background:var(--w20);border-color:var(--w50);color:var(--w)}
+.right-scroll{flex:1;overflow-y:auto;padding:1rem;scrollbar-width:thin;scrollbar-color:var(--w20) transparent}
+
+/* suggested section */
+.suggested-section{margin-bottom:1.25rem}
+.sug-lbl{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--lav);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px
+}
+.sug-lbl::before{content:'✦';font-size:9px}
+.suggested-card{
+  background:var(--lav-dim);border:1px solid var(--lav-border);
+  border-radius:var(--r);padding:1rem;margin-bottom:8px;cursor:pointer;
+  transition:background .2s,border-color .2s;position:relative
+}
+.suggested-card:hover{background:rgba(180,160,255,.18);border-color:rgba(180,160,255,.5)}
+.sc-why{
+  font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--lav);margin-bottom:5px;
+  display:flex;align-items:center;gap:5px
+}
+.sc-why::before{content:'↑';font-size:10px}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.sc-title{font-size:12px;font-weight:600;color:var(--w);line-height:1.4;flex:1}
+.sc-type{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:100px;flex-shrink:0}
+.sc-type.video{background:rgba(239,68,68,.2);color:rgba(255,130,130,.9)}
+.sc-type.pdf{background:rgba(168,85,247,.2);color:rgba(200,150,255,.9)}
+.sc-type.talk{background:rgba(59,130,246,.2);color:rgba(130,180,255,.9)}
+.sc-type.framework{background:rgba(34,197,94,.2);color:rgba(100,220,150,.9)}
+.sc-type.article{background:rgba(234,179,8,.2);color:rgba(255,210,80,.9)}
+.sc-meta{font-size:10px;color:var(--w50);font-weight:400}
+.sc-reason{
+  font-size:10px;font-style:italic;color:rgba(180,160,255,.7);
+  padding-top:7px;margin-top:7px;border-top:1px solid var(--lav-border);
+  line-height:1.5
+}
+
+/* divider between suggested and library */
+.lib-divider{display:flex;align-items:center;gap:8px;margin:4px 0 12px}
+.lib-divider-line{flex:1;height:1px;background:var(--w12)}
+.lib-divider-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--w30)}
+
+/* library cards */
+.lib-card{background:var(--w08);border:1px solid var(--w12);border-radius:var(--r);padding:.9rem 1rem;margin-bottom:8px;cursor:pointer;transition:background .2s,border-color .2s;opacity:.75}
+.lib-card:hover{background:var(--w12);border-color:var(--w20);opacity:1}
+.lc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.lc-title{font-size:11px;font-weight:600;color:var(--w90);line-height:1.4;flex:1}
+.lc-type{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:100px;flex-shrink:0}
+.lc-type.video{background:rgba(239,68,68,.2);color:rgba(255,130,130,.9)}
+.lc-type.pdf{background:rgba(168,85,247,.2);color:rgba(200,150,255,.9)}
+.lc-type.talk{background:rgba(59,130,246,.2);color:rgba(130,180,255,.9)}
+.lc-type.framework{background:rgba(34,197,94,.2);color:rgba(100,220,150,.9)}
+.lc-type.article{background:rgba(234,179,8,.2);color:rgba(255,210,80,.9)}
+.lc-meta{font-size:10px;color:var(--w50);font-weight:400}
+.right-foot{padding:.75rem 1rem;border-top:1px solid var(--w12);flex-shrink:0}
+.right-foot-note{font-size:10px;color:var(--w30);text-align:center;font-style:italic}
+
+/* hidden utility */
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5"/>
+        <path d="M7 10C7 10 8.5 13 10 13C11.5 13 13 10 13 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-name">Lydia</span>
+    <span class="brand-sub">by Shaping Wealth</span>
+  </div>
+  <div class="nav-r">
+    <!-- toggle for mockup demo only -->
+    <div class="state-toggle">
+      <button class="tog active" onclick="showHome()">Home</button>
+      <button class="tog" onclick="showConv()">In Conversation</button>
+    </div>
+    <div class="icon-btn">⚙️</div>
+    <div class="avatar">AM</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-top">
+      <button class="new-btn">✦ New Conversation</button>
+      <div class="search">
+        <span style="font-size:12px;color:var(--w50)">🔍</span>
+        <input type="text" placeholder="Search conversations..."/>
+      </div>
+    </div>
+    <div class="left-scroll">
+      <div class="hg">
+        <div class="hd">Today</div>
+        <div class="hi active" id="active-conv">Inheritance conversation — Sarah J.</div>
+        <div class="hi">How to open a loss aversion talk</div>
+      </div>
+      <div class="hg">
+        <div class="hd">Yesterday</div>
+        <div class="hi">Money story: avoidant client type</div>
+        <div class="hi">EQ coaching for new hire prep</div>
+        <div class="hi">Adult children & estate framing</div>
+      </div>
+      <div class="hg">
+        <div class="hd">This week</div>
+        <div class="hi">Divorce transition conversation</div>
+        <div class="hi">Anchoring bias — client script</div>
+        <div class="hi">Present bias: spending patterns</div>
+        <div class="hi">Financial anxiety check-in prep</div>
+      </div>
+      <div class="hg">
+        <div class="hd">Last week</div>
+        <div class="hi">Grief & money — widow client</div>
+        <div class="hi">Sudden wealth syndrome guide</div>
+        <div class="hi">Couple values misalignment case</div>
+      </div>
+    </div>
+    <div class="left-foot">
+      <div class="fi"><span style="font-size:14px;width:18px;text-align:center">❓</span> Help Centre</div>
+      <div class="fi"><span style="font-size:14px;width:18px;text-align:center">↪</span> Log Out</div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HOME STATE -->
+    <div class="home-scroll" id="home-state">
+      <div class="hero">
+        <div class="hero-h">Hi Amy, how can I <span>help today?</span></div>
+        <p class="hero-sub">Take full advantage of Shaping Wealth's behavioral intelligence ecosystem:<br/>know-how, content, collaboration, and guidance.</p>
+        <div class="pills">
+          <div class="pill">🎭 Roleplay</div>
+          <div class="pill">📖 Money Story</div>
+          <div class="pill">🧭 Financial Life Guide</div>
+        </div>
+        <div class="hero-inp">
+          <input type="text" placeholder="Ask me anything!"/>
+          <button class="send">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="sec">Or get started with a question</div>
+      <div class="sq-grid">
+        <div class="sq">
+          <div class="sq-q">"My new young hire needs an EQ boost to handle high-net-worth calls. Any ideas?"</div>
+          <div class="sq-a">Start Coaching →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"I'm overwhelmed navigating emotional client reactions this quarter."</div>
+          <div class="sq-a">Simplify View →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"I need to connect better with my client's adult children regarding inheritance."</div>
+          <div class="sq-a">Bridge Gap →</div>
+        </div>
+        <div class="sq">
+          <div class="sq-q">"Help me understand why my client keeps avoiding estate planning conversations."</div>
+          <div class="sq-a">Explore Pattern →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONVERSATION STATE -->
+    <div class="conv-scroll hidden" id="conv-state">
+      <div class="conv-header">
+        <div class="conv-title">Inheritance conversation — Sarah J.</div>
+        <div class="conv-date">Today · 10:24 AM</div>
+      </div>
+
+      <div class="msg user">
+        <div class="msg-av user">AM</div>
+        <div>
+          <div class="msg-bubble">I have a session with Sarah Johnson this afternoon. She recently found out she'll be inheriting a significant sum from her father's estate. She seems very avoidant whenever I bring it up. How should I approach this?</div>
+          <div class="msg-time">10:24 AM</div>
+        </div>
+      </div>
+
+      <div class="msg lydia">
+        <div class="msg-av lydia">L</div>
+        <div>
+          <div class="msg-bubble">Avoidance around inheritance is really common — and it's rarely about the money itself. It's usually about grief, identity, or guilt. Sarah may be associating the inheritance with loss rather than gain, which makes it emotionally loaded to discuss.<br/><br/>Before going into any practical framing, I'd suggest opening by acknowledging the loss first. Something like: <em>"Before we talk about anything practical, how are you doing with everything around your father's passing?"</em> — this signals that you're not here just to manage assets, you're here to support her through a human experience.<br/><br/>Once she feels heard, avoidance typically drops significantly and she'll be more open to the practical conversation.</div>
+          <div class="msg-time">10:24 AM</div>
+          <!-- INLINE RESOURCE SURFACED BY LYDIA -->
+          <div class="inline-resource">
+            <div class="ir-ico">🎙️</div>
+            <div>
+              <div class="ir-label">Lydia suggests</div>
+              <div class="ir-title">The Psychology of Inherited Wealth</div>
+              <div class="ir-meta">Talk · Dr. Sarah Newcomb · 24 min</div>
+            </div>
+            <div class="ir-arrow">→</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="msg user">
+        <div class="msg-av user">AM</div>
+        <div>
+          <div class="msg-bubble">That makes sense. She also mentioned that she feels guilty — like accepting the money means she's "benefiting" from her father's death. How do I address that?</div>
+          <div class="msg-time">10:31 AM</div>
+        </div>
+      </div>
+
+      <div class="msg lydia">
+        <div class="msg-av lydia">L</div>
+        <div>
+          <div class="msg-bubble">That guilt is one of the most common emotional patterns in inheritance situations — it has a name: <strong>inherited wealth guilt</strong>. It comes from conflating the money with the loss, as if accepting the inheritance means endorsing the death rather than honouring the relationship.<br/><br/>A reframe that often works: ask Sarah what her father wanted for her. Most people, when they think about it, know their parent wanted them to be secure and free from worry. The inheritance isn't a transaction — it's an act of love that outlasts a life. Framing it that way tends to separate the guilt from the practical reality.</div>
+          <div class="msg-time">10:33 AM</div>
+          <div class="inline-resource">
+            <div class="ir-ico">📄</div>
+            <div>
+              <div class="ir-label">Lydia suggests</div>
+              <div class="ir-title">Sudden Wealth Syndrome — Field Guide</div>
+              <div class="ir-meta">PDF · Shaping Wealth Research · 12 pages</div>
+            </div>
+            <div class="ir-arrow">→</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="msg user">
+        <div class="msg-av user">AM</div>
+        <div>
+          <div class="msg-bubble">Really helpful. Can you give me a roleplay scenario so I can practice the opening of this conversation?</div>
+          <div class="msg-time">10:38 AM</div>
+        </div>
+      </div>
+
+      <div class="msg lydia">
+        <div class="msg-av lydia">L</div>
+        <div>
+          <div class="msg-bubble">Of course. I'll play Sarah. Begin the session naturally — I'll respond as she might, based on the avoidant and guilt-laden profile you've described. When you're ready, just open the conversation as you would in real life.<br/><br/><em>— Lydia is now in Roleplay mode —</em></div>
+          <div class="msg-time">10:38 AM</div>
+        </div>
+      </div>
+
+      <!-- typing indicator -->
+      <div class="msg lydia">
+        <div class="msg-av lydia">L</div>
+        <div class="msg-bubble">
+          <div class="typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btm">
+      <div class="btm-row">
+        <span class="attach">📎</span>
+        <input class="btm-inp" type="text" placeholder="Ask Lydia about a client's behaviour, conversation prep, or a money story..."/>
+        <button class="btm-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="btm-meta">
+        <span>✦ Grounded in behavioural science</span>
+        <span>🔒 End-to-end encrypted</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — content library + contextual suggestions -->
+  <div class="right">
+    <div class="right-head">
+      <div class="right-title" id="right-title">📚 Shaping Wealth Library</div>
+      <div class="filter-row">
+        <div class="filter on">All</div>
+        <div class="filter">Video</div>
+        <div class="filter">PDF</div>
+        <div class="filter">Talk</div>
+        <div class="filter">Framework</div>
+      </div>
+    </div>
+
+    <div class="right-scroll">
+
+      <!-- SUGGESTED — shown in conversation state -->
+      <div id="suggested-section" class="suggested-section hidden">
+        <div class="sug-lbl">Suggested for this conversation</div>
+
+        <div class="suggested-card">
+          <div class="sc-why">Surfaced by Lydia</div>
+          <div class="sc-top">
+            <div class="sc-title">The Psychology of Inherited Wealth</div>
+            <div class="sc-type talk">Talk</div>
+          </div>
+          <div class="sc-meta">Dr. Sarah Newcomb · 24 min · Shaping Wealth Summit 2024</div>
+          <div class="sc-reason">Relevant because: client is showing avoidance and guilt patterns common in inheritance situations.</div>
+        </div>
+
+        <div class="suggested-card">
+          <div class="sc-why">Surfaced by Lydia</div>
+          <div class="sc-top">
+            <div class="sc-title">Sudden Wealth Syndrome — Field Guide</div>
+            <div class="sc-type pdf">PDF</div>
+          </div>
+          <div class="sc-meta">Shaping Wealth Research · 12 pages · 2023</div>
+          <div class="sc-reason">Relevant because: inherited wealth guilt and identity conflict are covered in depth in section 3.</div>
+        </div>
+
+        <div class="suggested-card">
+          <div class="sc-why">Surfaced by Lydia</div>
+          <div class="sc-top">
+            <div class="sc-title">Grief, Loss & Financial Decision-Making</div>
+            <div class="sc-type article">Article</div>
+          </div>
+          <div class="sc-meta">Shaping Wealth · 8 min read · Practitioner Series</div>
+          <div class="sc-reason">Relevant because: client is navigating bereavement alongside financial transition.</div>
+        </div>
+
+        <div class="lib-divider">
+          <div class="lib-divider-line"></div>
+          <div class="lib-divider-label">Full Library</div>
+          <div class="lib-divider-line"></div>
+        </div>
+      </div>
+
+      <!-- FULL LIBRARY — always visible, dimmed in conv state -->
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">Loss Aversion — Advisor Playbook</div>
+          <div class="lc-type pdf">PDF</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth Research · 18 pages · 2024</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">How to Uncover a Client's Money Story</div>
+          <div class="lc-type video">Video</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth · 31 min · Masterclass Series</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">The MAPS Framework for Life Transitions</div>
+          <div class="lc-type framework">Framework</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth · Core methodology</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">Navigating Couples & Money Conflict</div>
+          <div class="lc-type video">Video</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth · 19 min · Advisor Series</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">Roleplay Scenarios — Starter Pack</div>
+          <div class="lc-type pdf">PDF</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth · 22 pages · Roleplay Library</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">Endowment Effect in Client Conversations</div>
+          <div class="lc-type article">Article</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth · 6 min read · Practitioner Series</div>
+      </div>
+
+      <div class="lib-card">
+        <div class="lc-top">
+          <div class="lc-title">Financial Anxiety — Advisor Toolkit</div>
+          <div class="lc-type pdf">PDF</div>
+        </div>
+        <div class="lc-meta">Shaping Wealth Research · 14 pages · 2024</div>
+      </div>
+
+    </div>
+
+    <div class="right-foot">
+      <div class="right-foot-note" id="right-foot-note">Shaping Wealth content — curated for behavioural advisors</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showHome() {
+  document.getElementById('home-state').classList.remove('hidden');
+  document.getElementById('conv-state').classList.add('hidden');
+  document.getElementById('suggested-section').classList.add('hidden');
+  document.getElementById('right-title').textContent = '📚 Shaping Wealth Library';
+  document.getElementById('right-foot-note').textContent = 'Shaping Wealth content — curated for behavioural advisors';
+  document.querySelectorAll('.lib-card').forEach(c => c.style.opacity = '');
+  document.querySelectorAll('.tog')[0].classList.add('active');
+  document.querySelectorAll('.tog')[1].classList.remove('active');
+}
+
+function showConv() {
+  document.getElementById('home-state').classList.add('hidden');
+  document.getElementById('conv-state').classList.remove('hidden');
+  document.getElementById('suggested-section').classList.remove('hidden');
+  document.getElementById('right-title').textContent = '📚 Library';
+  document.getElementById('right-foot-note').textContent = '3 resources surfaced for this conversation';
+  document.querySelectorAll('.lib-card').forEach(c => c.style.opacity = '0.55');
+  document.querySelectorAll('.tog')[0].classList.remove('active');
+  document.querySelectorAll('.tog')[1].classList.add('active');
+  document.querySelector('.right-scroll').scrollTop = 0;
+}
+</script>
+
+</body>
+</html>
