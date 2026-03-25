@@ -1,1 +1,1 @@
-https://consult-with-riz.github.io/lydia-web-app
+https://consult-with-riz.github.io/lydia-web-app/lydia-dashboard
