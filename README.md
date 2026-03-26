@@ -1,4 +1,6 @@
-##MVP
+# Lydia Web App UI
+
+## MVP
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v1
 
@@ -12,10 +14,28 @@ https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v4
 
 
 
-##Vision
+## Vision
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-dashboard-v1
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-dashboard-v2
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-dashboard-v3
+
+
+# Lydia Voice Architecture Comparison
+
+A visual comparing two approaches to integrating ElevenLabs voice capabilities into Lydia, Shaping Wealth's AI behavioral coaching platform.
+
+## What it shows
+
+- **Riz's approach** — custom-built pipeline stitching separate STT, LLM, and TTS services
+- **Recommended approach** — ElevenLabs Conversational AI platform with Lydia's LLM plugged in
+
+## Usage
+
+Open [`comparison`](https://consult-with-riz.github.io/lydia-voice-architecture) in any browser.
+
+## Context
+
+Built as part of Lydia product planning at [Shaping Wealth](https://compass.shapingwealth.com/). March 2026.
