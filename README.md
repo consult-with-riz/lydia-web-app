@@ -17,8 +17,6 @@ https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v5
 
 https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v6
 
-[here](https://consult-with-riz.github.io/lydia-web-app/lydia-mvp-v1)
-
 
 
 
