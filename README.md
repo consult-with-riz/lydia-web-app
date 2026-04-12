@@ -36,8 +36,8 @@ https://consult-with-riz.github.io/lydia-web-app/lydia-dashboard-v3
 
 ### Lydia Agent Map
 
-https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-1.html
-https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-2.html
+https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-1
+https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-2
 
 
 ## Lydia Voice Architecture Comparison
