@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lydia — Behavioral Operating System</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Epilogue:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral: #EA6A47;
+  --coral-glow: rgba(234,106,71,0.2);
+  --coral-soft: rgba(234,106,71,0.1);
+  --cream: #F5EFE0;
+  --cream-60: rgba(245,239,224,0.6);
+  --cream-30: rgba(245,239,224,0.3);
+  --cream-12: rgba(245,239,224,0.12);
+  --cream-06: rgba(245,239,224,0.06);
+  --bg: #0d0d11;
+  --surface: rgba(255,255,255,0.035);
+  --border: rgba(255,255,255,0.08);
+  --border-lit: rgba(255,255,255,0.15);
+
+  /* Phase colors */
+  --p0: #C9A96E;
+  --p1: #7ECBA1;
+  --p2: #EA6A47;
+  --p3: #E8D06A;
+  --p4: #E87B6A;
+  --p5: #6ABDE8;
+  --p6: #7AAFDF;
+  --p7: #E86A9A;
+  --p8: #BA8FD4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Epilogue', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.4;
+}
+
+/* Subtle dot grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(245,239,224,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 32px 100px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 72px 0 56px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 48px;
+  align-items: end;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 56px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--coral);
+  display: block;
+}
+
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--cream);
+  margin-bottom: 18px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--coral);
+}
+
+.hero-sub {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--cream-60);
+  max-width: 480px;
+}
+
+.hero-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  flex-shrink: 0;
+  min-width: 160px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stat-num {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cream-30);
+}
+
+.stat-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── TRACK LABELS ── */
+.tracks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 40px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.track {
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.track-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.track-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cream-30);
+  margin-bottom: 3px;
+}
+
+.track-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cream-60);
+}
+
+/* ── PHASES ── */
+.phases {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phase {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.25s;
+  animation: fadeUp 0.5s ease both;
+}
+
+.phase:hover { border-color: var(--border-lit); }
+
+.phase-trigger {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.phase-trigger:hover { background: var(--cream-06); }
+
+.phase-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: var(--cream-30);
+}
+
+.phase-title-group {}
+
+.phase-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.phase-name {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+}
+
+.phase-question {
+  font-size: 12px;
+  color: var(--cream-30);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.phase-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cream-06);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--cream-30);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.phase.open .phase-toggle {
+  background: var(--coral-soft);
+  border-color: var(--coral);
+  color: var(--coral);
+  transform: rotate(45deg);
+}
+
+/* ── AGENT PANEL ── */
+.phase-panel {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 24px;
+}
+
+.phase.open .phase-panel { display: block; }
+
+.agent-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tier-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cream-30);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tier-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.agent-card {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.agent-card:hover {
+  background: var(--cream-06);
+  border-color: var(--border-lit);
+  transform: translateY(-1px);
+}
+
+.agent-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 10px 10px 0 0;
+}
+
+.agent-card.primary::before { opacity: 1; }
+.agent-card.supporting::before { opacity: 0.5; }
+.agent-card.embedded::before { opacity: 0.25; }
+
+.agent-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+  opacity: 0.6;
+}
+
+.agent-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.agent-desc {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--cream-30);
+}
+
+.embedded-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.embedded-pill {
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: var(--cream-06);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--cream-30);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* ── FLOW CONNECTOR ── */
+.connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  position: relative;
+}
+
+.connector::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border-lit), transparent);
+}
+
+.connector-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border-lit);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  font-size: 10px;
+  color: var(--cream-30);
+}
+
+/* ── LOOP BANNER ── */
+.loop-banner {
+  margin-top: 40px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, rgba(234,106,71,0.08), rgba(186,143,212,0.08));
+  border: 1px solid rgba(234,106,71,0.2);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+  animation: fadeUp 0.5s 0.4s ease both;
+}
+
+.loop-icon {
+  font-size: 28px;
+  opacity: 0.8;
+}
+
+.loop-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.loop-desc {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--cream-60);
+}
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-note {
+  font-size: 11.5px;
+  color: var(--cream-30);
+  line-height: 1.6;
+  max-width: 540px;
+}
+
+.footer-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(245,239,224,0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  opacity: 0.5;
+  display: block;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.phase:nth-child(1)  { animation-delay: 0.05s; }
+.phase:nth-child(3)  { animation-delay: 0.10s; }
+.phase:nth-child(5)  { animation-delay: 0.15s; }
+.phase:nth-child(7)  { animation-delay: 0.20s; }
+.phase:nth-child(9)  { animation-delay: 0.25s; }
+.phase:nth-child(11) { animation-delay: 0.30s; }
+.phase:nth-child(13) { animation-delay: 0.35s; }
+.phase:nth-child(15) { animation-delay: 0.40s; }
+.phase:nth-child(17) { animation-delay: 0.45s; }
+
+@media (max-width: 680px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: row; flex-wrap: wrap; }
+  .tracks { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <div class="hero-eyebrow">Lydia · Shaping Wealth</div>
+      <h1>A <em>Behavioral</em> Operating<br>System for Advisors</h1>
+      <p class="hero-sub">Not a set of agents. A compounding intelligence layer across the full advisor–client relationship — from how advisors show up, to how clients grow over a lifetime.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">9</div>
+        <div class="stat-label">Phases</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">35+</div>
+        <div class="stat-label">Agents</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Tracks</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TRACKS -->
+  <div class="tracks">
+    <div class="track">
+      <div class="track-dot" style="background:#7ECBA1"></div>
+      <div>
+        <div class="track-label">Track A</div>
+        <div class="track-name">Advisor Development</div>
+      </div>
+    </div>
+    <div class="track">
+      <div class="track-dot" style="background:#7AAFDF"></div>
+      <div>
+        <div class="track-label">Track B</div>
+        <div class="track-name">Client Lifecycle</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="phases" id="phases">
+  </div>
+
+  <!-- LOOP BANNER -->
+  <div class="loop-banner">
+    <div class="loop-icon">∞</div>
+    <div>
+      <div class="loop-title">This is not linear. It is a loop with memory.</div>
+      <div class="loop-desc">Each phase feeds forward and backward. Discovery informs future discovery. Decisions inform future decisions. The advisor improves across every cycle. This is where Lydia becomes not a tool — but a compounding intelligence layer.</div>
+    </div>
+  </div>
+
+  <footer>
+    <p class="footer-note">Click any phase to expand agents. Primary agents drive the phase. Supporting agents enhance quality. Embedded agents run silently in the background across every interaction.</p>
+    <div class="footer-badge">Lydia · Agent Architecture v2</div>
+  </footer>
+
+</div>
+
+<script>
+const PHASES = [
+  {
+    num: '00',
+    color: '#C9A96E',
+    track: 'A',
+    label: 'Advisor Readiness',
+    name: 'Advisor Readiness',
+    question: '"Am I prepared to show up well?"',
+    primary: [
+      { name: 'Advisor Warm-Up Agent', desc: 'Prepares the advisor mentally and emotionally before client interactions. State check, intention setting.' },
+      { name: 'Advisor Wellbeing Agent', desc: 'Monitors ongoing advisor stress, burnout signals, and emotional sustainability across their book of business.' },
+    ],
+    supporting: [
+      { name: 'Bias Awareness Agent', desc: 'Surfaces the advisor\'s active cognitive biases before sessions. Prevents projection onto clients.' },
+      { name: 'Emotional Calibration Agent', desc: 'Helps advisors regulate emotional state. Flags when personal financial stress may contaminate client work.' },
+    ],
+    embedded: ['Tone coach', 'Cognitive load monitor'],
+    note: 'This is where most competitors do nothing. This is where Lydia\'s human-first positioning starts.'
+  },
+  {
+    num: '01',
+    color: '#7ECBA1',
+    track: 'B',
+    label: 'Prospecting & Positioning',
+    name: 'Prospecting & Positioning',
+    question: '"Why would someone choose me?"',
+    primary: [
+      { name: 'Narrative Positioning Agent', desc: 'Helps advisors articulate their unique value in human terms. Story-first, credentials-second.' },
+      { name: 'Cialdini Influence Agent', desc: 'Applies proven influence principles — reciprocity, authority, social proof — to advisor positioning and outreach.' },
+    ],
+    supporting: [
+      { name: 'Ideal Client Persona Agent', desc: 'Builds rich behavioral personas of ideal clients. Psychographic, not just demographic.' },
+      { name: 'Message Testing Agent', desc: 'Tests positioning language for resonance before it reaches prospects.' },
+    ],
+    embedded: ['Authenticity checker', 'Trust signal enhancer'],
+  },
+  {
+    num: '02',
+    color: '#EA6A47',
+    track: 'B',
+    label: 'Discovery',
+    name: 'First Conversation & Discovery',
+    question: '"Do I understand this human?"',
+    primary: [
+      { name: 'Money Story Agent', desc: 'Elicits and interprets the client\'s financial history, flashpoints, and formative money experiences. Maps directly to Klontz money scripts.' },
+      { name: 'Rigorous Empathy Agent', desc: 'Coaches the advisor toward deeper empathic accuracy — not just listening, but reflecting back with precision.' },
+      { name: 'Better Questions Agent', desc: 'Generates high-quality discovery questions tailored to what\'s been said so far. Moves beyond surface to meaning.' },
+    ],
+    supporting: [
+      { name: 'Active Listening Agent', desc: 'Real-time or post-session analysis of conversation quality. Flags interruptions, premature advice, missed signals.' },
+      { name: 'Emotional Signal Detection Agent', desc: 'Detects emotional subtext in client language — anxiety, avoidance, grief, excitement. Surfaces for advisor awareness.' },
+    ],
+    embedded: ['Bias detection (advisor + client)', 'Language framing optimizer'],
+    note: 'Critical node. Maps directly to Klontz: money scripts, financial flashpoints, values. Biggest leverage point in the system.'
+  },
+  {
+    num: '03',
+    color: '#E8D06A',
+    track: 'B',
+    label: 'Framing & Plan Construction',
+    name: 'Framing & Plan Construction',
+    question: '"What does a good life look like — and how do we finance it?"',
+    primary: [
+      { name: 'Financial Life Guide Agent', desc: 'Meta-agent stack. Guides client through values clarification, life goal elicitation, and meaning-of-money exploration.' },
+      { name: 'Money Life Matrix Agent', desc: 'Maps financial decisions against life domains — family, health, work, purpose. Surfaces real tradeoffs.' },
+      { name: 'Future Self Agent', desc: 'Helps clients connect emotionally to their future selves. Reduces temporal discounting. Makes long-term goals feel real.' },
+    ],
+    supporting: [
+      { name: 'Tradeoff Simulator Agent', desc: 'Makes implicit tradeoffs explicit. "If you do X, you give up Y" — framed in life terms, not just numbers.' },
+      { name: 'Scenario Planning Agent', desc: 'Builds multiple life scenarios around key decisions. Expands client thinking beyond single-path planning.' },
+    ],
+    embedded: ['Temporal discounting nudges', 'Loss aversion reframing'],
+  },
+  {
+    num: '04',
+    color: '#E87B6A',
+    track: 'B',
+    label: 'Decision & Commitment',
+    name: 'Decision & Commitment',
+    question: '"Will the client act?"',
+    primary: [
+      { name: 'Decision Hygiene Agent', desc: 'Ensures decisions are made with clear heads. Detects emotional flooding, information overload, and premature closure.' },
+      { name: 'Commitment & Follow-Through Agent', desc: 'Converts intentions to commitments. Uses implementation intentions, if-then planning, accountability anchors.' },
+    ],
+    supporting: [
+      { name: 'Choice Architecture Agent', desc: 'Structures how options are presented to reduce cognitive overload and nudge toward better defaults.' },
+      { name: 'Risk Perception Agent', desc: 'Calibrates how risk is felt, not just measured. Separates emotional risk tolerance from financial risk capacity.' },
+    ],
+    embedded: ['Probability framing', 'Regret minimization framing'],
+    note: 'Where most plans die. This phase is underbuilt across the entire industry.'
+  },
+  {
+    num: '05',
+    color: '#6ABDE8',
+    track: 'B',
+    label: 'Implementation',
+    name: 'Implementation',
+    question: '"Can we translate intention into behavior?"',
+    primary: [
+      { name: 'Behavioral Activation Agent', desc: 'Bridges the intention-action gap. Breaks goals into first steps. Reduces activation energy.' },
+      { name: 'Habit Formation Agent', desc: 'Designs behavior change as habit loops — cue, routine, reward. Makes good financial behavior automatic.' },
+    ],
+    supporting: [
+      { name: 'Friction Reduction Agent', desc: 'Identifies and removes obstacles between decision and action. Simplifies, automates, defaults.' },
+      { name: 'Accountability Agent', desc: 'Lightweight ongoing check-ins calibrated to client commitment style. Not nagging — meaningful touchpoints.' },
+    ],
+    embedded: ['Nudge engine', 'Progress reinforcement'],
+  },
+  {
+    num: '06',
+    color: '#7AAFDF',
+    track: 'B',
+    label: 'Ongoing Relationship',
+    name: 'Ongoing Relationship & Reviews',
+    question: '"Can we sustain progress over time?"',
+    primary: [
+      { name: 'Meeting Evaluation Agent', desc: 'Pre/during/post meeting support. Prepares agenda, flags emotional context, generates debrief and follow-up.' },
+      { name: 'Client Pulse Agent', desc: 'Periodic lightweight check-ins between meetings. Captures emotional state, life events, goal progress.' },
+      { name: 'Life Changes Detection Agent', desc: 'Monitors for signals of major life change — new job, family shift, health event — and triggers appropriate response.' },
+    ],
+    supporting: [
+      { name: 'Conversation Coach Agent', desc: 'Pre/during/post meeting coaching for the advisor. Talking points, reframes, difficult conversation scripts.' },
+      { name: 'Trust Maintenance Agent', desc: 'Monitors trust signals across the relationship. Flags erosion early. Suggests repair actions.' },
+    ],
+    embedded: ['Drift detection (financial + emotional)', 'Engagement scoring'],
+    note: 'Where revenue and impact compound. The most important phase for long-term business value.'
+  },
+  {
+    num: '07',
+    color: '#E86A9A',
+    track: 'B',
+    label: 'Transitions & Stress',
+    name: 'Transitions & Stress Events',
+    question: '"How do we handle life when it gets hard or changes?"',
+    primary: [
+      { name: 'Crisis Navigation Agent', desc: 'Guides advisor and client through acute financial or life crises — divorce, death, job loss, market panic. Specialized playbooks per event type.' },
+      { name: 'Emotional Containment Agent', desc: 'Provides structure during high-emotion events. Slows decisions. Creates psychological safety for the client.' },
+    ],
+    supporting: [
+      { name: 'Decision Simplification Agent', desc: 'Reduces complexity during overwhelm. "Here are the three things that matter right now."' },
+      { name: 'Priority Reset Agent', desc: 'Helps client re-establish what matters most when a major life event reshuffles everything.' },
+    ],
+    embedded: ['Cognitive overload reduction', 'Loss framing sensitivity', 'Referral threshold monitor'],
+    note: 'Massive white space in the industry. Most advisors are unprepared for this. Lydia gives them a framework.'
+  },
+  {
+    num: '08',
+    color: '#BA8FD4',
+    track: 'A+B',
+    label: 'Reflection & Growth',
+    name: 'Reflection, Learning & Growth',
+    question: '"How do both advisor and client get better?"',
+    primary: [
+      { name: 'Decision Debrief Agent', desc: 'Post-decision analysis. Separates process quality from outcomes. Builds a library of advisor decision patterns.' },
+      { name: 'Advisor Growth Agent', desc: 'Tracks advisor behavioral skill development across all clients. Feeds triggers back into Phase 00 training.' },
+      { name: 'Client Growth Reflection Agent', desc: 'Periodic client-facing reflection on their own progress, patterns, and growth. Deepens self-awareness.' },
+    ],
+    supporting: [
+      { name: 'Pattern Recognition Agent', desc: 'Surfaces recurring patterns across the advisor\'s full client base. Population-level behavioral insights.' },
+      { name: 'Behavioral Progress Tracker', desc: 'Longitudinal view of client behavior change. Celebrates genuine progress. Identifies persistent sticking points.' },
+    ],
+    embedded: ['Resulting (process vs outcome separation)', 'Learning loop reinforcement'],
+    note: 'The flywheel. Phase 08 outputs feed directly back into Phase 00, making the entire system compounding over time.'
+  },
+];
+
+function buildPhase(phase, index) {
+  const color = phase.color;
+
+  const primaryCards = phase.primary.map(a => `
+    <div class="agent-card primary" style="--phase-color:${color}; border-top-color:${color}40;">
+      <div class="agent-type" style="color:${color}">Primary</div>
+      <div class="agent-name">${a.name}</div>
+      <div class="agent-desc">${a.desc}</div>
+    </div>
+  `).join('');
+
+  const supportingCards = phase.supporting.map(a => `
+    <div class="agent-card supporting" style="border-top-color:${color}25;">
+      <div class="agent-type" style="color:${color}80">Supporting</div>
+      <div class="agent-name">${a.name}</div>
+      <div class="agent-desc">${a.desc}</div>
+    </div>
+  `).join('');
+
+  const embeddedPills = phase.embedded.map(e => `
+    <div class="embedded-pill">${e}</div>
+  `).join('');
+
+  const noteHTML = phase.note ? `
+    <div style="margin-top:16px; padding:12px 16px; background:rgba(255,255,255,0.03); border-left:2px solid ${color}60; border-radius:0 6px 6px 0;">
+      <p style="font-size:11.5px; color:rgba(245,239,224,0.45); line-height:1.6; font-style:italic;">${phase.note}</p>
+    </div>
+  ` : '';
+
+  return `
+    <div class="phase" id="phase-${phase.num}" data-index="${index}">
+      <div class="phase-trigger" onclick="togglePhase(this)">
+        <div class="phase-num" style="color:${color}80">${phase.num}</div>
+        <div class="phase-title-group">
+          <div class="phase-label" style="color:${color}">${phase.label} · Track ${phase.track}</div>
+          <div class="phase-name">${phase.name}</div>
+          <div class="phase-question">${phase.question}</div>
+        </div>
+        <div class="phase-toggle">+</div>
+      </div>
+      <div class="phase-panel">
+        <div class="agent-tiers">
+          <div>
+            <div class="tier-label" style="color:${color}90">Primary Agents</div>
+            <div class="agents-grid">${primaryCards}</div>
+          </div>
+          <div>
+            <div class="tier-label">Supporting Agents</div>
+            <div class="agents-grid">${supportingCards}</div>
+          </div>
+          <div>
+            <div class="tier-label">Embedded · Always-On</div>
+            <div class="embedded-row">${embeddedPills}</div>
+          </div>
+          ${noteHTML}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function togglePhase(trigger) {
+  const phase = trigger.closest('.phase');
+  phase.classList.toggle('open');
+}
+
+// Render phases with connectors
+const container = document.getElementById('phases');
+PHASES.forEach((phase, i) => {
+  container.insertAdjacentHTML('beforeend', buildPhase(phase, i));
+  if (i < PHASES.length - 1) {
+    container.insertAdjacentHTML('beforeend', `
+      <div class="connector">
+        <div class="connector-dot">↓</div>
+      </div>
+    `);
+  }
+});
+</script>
+</body>
+</html>
