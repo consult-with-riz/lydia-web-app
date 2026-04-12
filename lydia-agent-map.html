@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lydia — Agent Architecture Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #EA6A47;
+    --coral-dim: rgba(234,106,71,0.18);
+    --coral-mid: rgba(234,106,71,0.45);
+    --cream: #F5EFE0;
+    --cream-dim: rgba(245,239,224,0.12);
+    --cream-mid: rgba(245,239,224,0.45);
+    --charcoal: #4A4A4A;
+    --bg: #0e0e14;
+    --surface: rgba(255,255,255,0.04);
+    --surface-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.07);
+    --border-bright: rgba(255,255,255,0.14);
+    --advisor-color: #7ECBA1;
+    --advisor-dim: rgba(126,203,161,0.15);
+    --client-color: #7AAFDF;
+    --client-dim: rgba(122,175,223,0.15);
+    --shared-color: #BA8FD4;
+    --shared-dim: rgba(186,143,212,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,239,224,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,239,224,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 40px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    margin-bottom: 64px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {}
+
+  .lydia-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .lydia-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--coral);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  h1 span {
+    color: var(--coral);
+  }
+
+  .header-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(245,239,224,0.5);
+    max-width: 520px;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .legend-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(245,239,224,0.3);
+    margin-bottom: 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(245,239,224,0.65);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── LAYER ARCHITECTURE ── */
+  .architecture {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .layer {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+
+  .layer:hover {
+    border-color: var(--border-bright);
+  }
+
+  .layer-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .layer-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(245,239,224,0.25);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .layer-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .layer-meta {
+    font-size: 12px;
+    color: rgba(245,239,224,0.4);
+    text-align: right;
+  }
+
+  .layer-body {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  /* ── AGENT CARDS ── */
+  .agent {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .agent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 10px 10px 0 0;
+    opacity: 0.7;
+  }
+
+  .agent:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-bright);
+    transform: translateY(-1px);
+  }
+
+  .agent-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tag-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .agent-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .agent-desc {
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: rgba(245,239,224,0.5);
+  }
+
+  .agent-io {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .io-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 10.5px;
+    color: rgba(245,239,224,0.38);
+    line-height: 1.4;
+  }
+
+  .io-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Layer colour theming */
+  .layer-0 .layer-name { color: #C9A96E; }
+  .layer-0 .agent::before { background: #C9A96E; }
+  .layer-0 .agent-tag { color: #C9A96E; }
+  .layer-0 .tag-dot { background: #C9A96E; }
+
+  .layer-1 .layer-name { color: var(--advisor-color); }
+  .layer-1 .agent::before { background: var(--advisor-color); }
+  .layer-1 .agent-tag { color: var(--advisor-color); }
+  .layer-1 .tag-dot { background: var(--advisor-color); }
+
+  .layer-2 .layer-name { color: var(--coral); }
+  .layer-2 .agent::before { background: var(--coral); }
+  .layer-2 .agent-tag { color: var(--coral); }
+  .layer-2 .tag-dot { background: var(--coral); }
+
+  .layer-3 .layer-name { color: var(--client-color); }
+  .layer-3 .agent::before { background: var(--client-color); }
+  .layer-3 .agent-tag { color: var(--client-color); }
+  .layer-3 .tag-dot { background: var(--client-color); }
+
+  .layer-4 .layer-name { color: var(--shared-color); }
+  .layer-4 .agent::before { background: var(--shared-color); }
+  .layer-4 .agent-tag { color: var(--shared-color); }
+  .layer-4 .tag-dot { background: var(--shared-color); }
+
+  /* ── FLOW CONNECTOR ── */
+  .flow-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    position: relative;
+  }
+
+  .flow-connector::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(245,239,224,0.08), rgba(245,239,224,0.18), rgba(245,239,224,0.08));
+  }
+
+  .flow-arrow {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid rgba(245,239,224,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-size: 11px;
+    color: rgba(245,239,224,0.35);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 16px;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: rgba(245,239,224,0.28);
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  .footer-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,239,224,0.22);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .footer-badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--coral);
+    opacity: 0.6;
+  }
+
+  /* ── FADE IN ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  header { animation: fadeUp 0.5s ease both; }
+  .layer:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+  .layer:nth-child(2) { animation: fadeUp 0.5s 0.15s ease both; }
+  .layer:nth-child(3) { animation: fadeUp 0.5s 0.2s ease both; }
+  .layer:nth-child(4) { animation: fadeUp 0.5s 0.25s ease both; }
+  .layer:nth-child(5) { animation: fadeUp 0.5s 0.3s ease both; }
+  footer { animation: fadeUp 0.5s 0.35s ease both; }
+
+  /* flow connector animation */
+  .flow-connector { animation: fadeUp 0.5s 0.15s ease both; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="lydia-label">Lydia · Agent Architecture</div>
+      <h1>Behavioral Intelligence<br>Across the <span>Full Lifecycle</span></h1>
+      <p class="header-desc">A high-level map of Lydia's agent layers — from advisor training through the complete advisor-client journey. Psychology of financial planning embedded throughout, not bolted on.</p>
+    </div>
+    <div class="legend">
+      <div class="legend-title">User Layer</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#C9A96E"></div> Foundational (pre-client)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--advisor-color)"></div> Advisor-facing</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div> Joint (advisor + client)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--client-color)"></div> Client-facing</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--shared-color)"></div> Orchestration layer</div>
+    </div>
+  </header>
+
+  <!-- ARCHITECTURE -->
+  <div class="architecture">
+
+    <!-- PHASE 0: Training Foundation -->
+    <div class="layer layer-0">
+      <div class="layer-header">
+        <div class="layer-number">PHASE 00</div>
+        <div class="layer-name">Advisor Training Foundation</div>
+        <div class="layer-meta">Pre-client · Klontz core</div>
+      </div>
+      <div class="layer-body">
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Training Agent</div>
+          <div class="agent-name">Psychology Curriculum Agent</div>
+          <div class="agent-desc">Delivers Klontz framework content — money scripts, financial disorders, behavioral biases — as structured learning modules. Tracks advisor mastery.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Advisor profile, learning history</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Competency scores, unlocked capabilities</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Training Agent</div>
+          <div class="agent-name">Role Play Simulation Agent</div>
+          <div class="agent-desc">Simulates difficult client conversations — money avoidance, financial conflict, trauma — so advisors practice behavioral skills before real sessions.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Scenario type, advisor skill level</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Session debrief, skill gap report</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Training Agent</div>
+          <div class="agent-name">Bias Calibration Agent</div>
+          <div class="agent-desc">Surfaces the advisor's own money scripts and cognitive biases. Prevents projection onto clients. Builds self-awareness before client-facing work begins.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Advisor assessments, reflections</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Personal bias profile, watchlist flags</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-arrow">↓</div></div>
+
+    <!-- PHASE 1: Prospecting & Discovery -->
+    <div class="layer layer-1">
+      <div class="layer-header">
+        <div class="layer-number">PHASE 01</div>
+        <div class="layer-name">Prospecting & Discovery</div>
+        <div class="layer-meta">Advisor-facing · Pre-engagement</div>
+      </div>
+      <div class="layer-body">
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Intake Agent</div>
+          <div class="agent-name">Prospect Behavioral Screen</div>
+          <div class="agent-desc">Analyzes early signals — questionnaire responses, stated goals, language patterns — to form an initial psychological profile before the first meeting.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Intake form, prospect data</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Preliminary money script hypothesis</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Prep Agent</div>
+          <div class="agent-name">Discovery Session Prep Agent</div>
+          <div class="agent-desc">Briefs the advisor before the discovery call. Suggests opening questions, flags likely emotional triggers, recommends communication style based on early profile.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Prospect profile, advisor style</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Pre-session brief, question set</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Analysis Agent</div>
+          <div class="agent-name">Discovery Debrief Agent</div>
+          <div class="agent-desc">Processes discovery call transcript or notes. Extracts emotional themes, values signals, and relationship-to-money patterns. Seeds the client's behavioral profile.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Call transcript / advisor notes</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Behavioral profile v1, CRM update</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-arrow">↓</div></div>
+
+    <!-- PHASE 2: Onboarding & Profiling -->
+    <div class="layer layer-2">
+      <div class="layer-header">
+        <div class="layer-number">PHASE 02</div>
+        <div class="layer-name">Onboarding & Deep Profiling</div>
+        <div class="layer-meta">Joint (advisor + client)</div>
+      </div>
+      <div class="layer-body">
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Assessment Agent</div>
+          <div class="agent-name">Money Script Assessment Agent</div>
+          <div class="agent-desc">Delivers validated Klontz Money Script Inventory (KMSI) or equivalent. Scores and interprets results. Maps client to money script archetypes with clinical accuracy.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Client responses to KMSI</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Money script profile, risk flags</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Life Planning Agent</div>
+          <div class="agent-name">Financial Life Guide Agent</div>
+          <div class="agent-desc">Guides the client through values clarification and life goal elicitation. Captures what money means to them — not what they have, but what they want it to do.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Client responses, life domains</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Values map, prioritized life goals</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Profile Agent</div>
+          <div class="agent-name">Behavioral Profile Synthesizer</div>
+          <div class="agent-desc">Integrates money scripts, life values, financial history, and emotional patterns into a unified behavioral profile. This becomes the persistent intelligence layer for all downstream agents.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> All Phase 01–02 outputs</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Master behavioral profile (living doc)</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Advisor Prep</div>
+          <div class="agent-name">Advisor Coaching Agent</div>
+          <div class="agent-desc">Translates the client's behavioral profile into advisor guidance. "This client has money avoidance scripts — here's how to frame goal-setting conversations with them."</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Behavioral profile</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Tailored advisor playbook per client</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-arrow">↓</div></div>
+
+    <!-- PHASE 3: Ongoing Planning -->
+    <div class="layer layer-3">
+      <div class="layer-header">
+        <div class="layer-number">PHASE 03</div>
+        <div class="layer-name">Ongoing Planning & Client Engagement</div>
+        <div class="layer-meta">Client-facing · Recurring</div>
+      </div>
+      <div class="layer-body">
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Session Agent</div>
+          <div class="agent-name">Meeting Prep Agent</div>
+          <div class="agent-desc">Before every review meeting, synthesizes what's changed — market events, life events, profile drift — and prepares the advisor with behavioral context and talking points.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Profile, prior meeting notes, market data</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Meeting brief, agenda, question prompts</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Behavioral Agent</div>
+          <div class="agent-name">Behavioral Intervention Agent</div>
+          <div class="agent-desc">Detects emotional triggers and behavioral risks in real-time — panic selling signals, avoidance patterns, impulse decisions — and provides the advisor with de-escalation scripts.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Client communication, behavioral signals</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Alert + recommended advisor response</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Planning Agent</div>
+          <div class="agent-name">Values-Aligned Plan Agent</div>
+          <div class="agent-desc">Ensures financial planning recommendations are anchored to the client's values profile, not just risk tolerance. Flags when a plan recommendation conflicts with stated life goals.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Plan draft, values map</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Alignment score, conflict flags, rewrites</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Client Agent</div>
+          <div class="agent-name">Client Check-In Agent</div>
+          <div class="agent-desc">Periodic lightweight client touchpoints between advisor meetings. Captures emotional state, life events, and goal progress. Updates the behavioral profile continuously.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Client responses, calendar triggers</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Profile update, advisor summary</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Crisis Agent</div>
+          <div class="agent-name">Life Event Response Agent</div>
+          <div class="agent-desc">Activated by major life events — divorce, death, job loss, inheritance — with specialized behavioral guidance for the advisor and tailored support pathways for the client.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Life event trigger, existing profile</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Event-specific advisor playbook + referral triggers</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div">Post-Meeting</div>
+          <div class="agent-name">Session Debrief Agent</div>
+          <div class="agent-desc">Processes meeting notes or transcript post-session. Captures decisions, emotional themes, next steps. Updates the profile and generates a client-facing follow-up summary.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Meeting notes / transcript</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Profile update, action items, client email</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-arrow">↓</div></div>
+
+    <!-- PHASE 4: Orchestration -->
+    <div class="layer layer-4">
+      <div class="layer-header">
+        <div class="layer-number">PHASE 04</div>
+        <div class="layer-name">Orchestration & Intelligence Layer</div>
+        <div class="layer-meta">Cross-cutting · Always-on</div>
+      </div>
+      <div class="layer-body">
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Super Agent</div>
+          <div class="agent-name">Lydia Super-Agent</div>
+          <div class="agent-desc">The central orchestrator. Routes tasks to the right specialist agent, manages context across the full client history, and ensures behavioral profile consistency across all touchpoints.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Any request from advisor or client</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Routed to correct agent with full context</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Memory Agent</div>
+          <div class="agent-name">Behavioral Profile Store</div>
+          <div class="agent-desc">The living persistent memory of the client relationship. Updated after every interaction. Every agent reads from and writes to this store — it's the shared context layer across all phases.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Outputs from all agents</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Enriched context passed to any agent on request</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Quality Agent</div>
+          <div class="agent-name">Referral Threshold Agent</div>
+          <div class="agent-desc">Monitors for clinical escalation signals — financial trauma, severe anxiety, relationship breakdown — and surfaces referral recommendations to the advisor when Lydia's scope should yield to a therapist.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Session outputs, profile flags</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Referral alert + suggested resources</div>
+          </div>
+        </div>
+
+        <div class="agent">
+          <div class="agent-tag"><div class="tag-dot"></div>Analytics Agent</div>
+          <div class="agent-name">Advisor Performance Agent</div>
+          <div class="agent-desc">Tracks advisor behavioral skill development over time — are they applying psychology concepts, handling difficult conversations well, improving client retention? Feeds back into training.</div>
+          <div class="agent-io">
+            <div class="io-row"><span class="io-label">IN →</span> Advisor session data across all clients</div>
+            <div class="io-row"><span class="io-label">OUT →</span> Skill progression report, training triggers</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /architecture -->
+
+  <footer>
+    <p class="footer-note">This is a phase-level agent map — not a technical spec. Each agent represents a discrete behavioral function. The next step is defining inputs, outputs, and handoff logic per agent, then sequencing into buildable sprints.</p>
+    <div class="footer-badge">Lydia · Shaping Wealth</div>
+  </footer>
+
+</div>
+</body>
+</html>
