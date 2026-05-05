@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Story — Conversation Mockup</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f0f2f7;
+        color: #1e293b;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      .header {
+        background: #fff;
+        border-bottom: 1px solid #d4d8e3;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+      .header-icon {
+        width: 36px;
+        height: 36px;
+        background: #0c418f;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 18px;
+      }
+      .header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+      }
+      .header p {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 1px;
+      }
+
+      /* Chat area */
+      .chat-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px 24px 120px;
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .message {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .message.ai {
+        justify-content: flex-start;
+      }
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .ai .avatar {
+        background: #0c418f;
+        color: #fff;
+      }
+      .user .avatar {
+        background: #c76ac0;
+        color: #fff;
+        order: 2;
+      }
+
+      .bubble {
+        max-width: 80%;
+        padding: 14px 18px;
+        border-radius: 18px;
+        line-height: 1.55;
+        font-size: 15px;
+      }
+      .ai .bubble {
+        background: #fff;
+        border: 1px solid #d4d8e3;
+        border-radius: 18px 18px 18px 4px;
+        color: #1e293b;
+      }
+      .user .bubble {
+        background: #0c418f;
+        color: #fff;
+        border-radius: 18px 18px 4px 18px;
+      }
+
+      /* Typing indicator */
+      .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 8px 0;
+      }
+      .typing-indicator span {
+        width: 7px;
+        height: 7px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: typeBounce 1.2s infinite;
+      }
+      .typing-indicator span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      @keyframes typeBounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-6px);
+        }
+      }
+
+      /* Quick-reply buttons */
+      .quick-replies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        margin-left: 42px;
+      }
+      .quick-reply-btn {
+        background: #fff;
+        border: 1.5px solid #c76ac0;
+        border-radius: 20px;
+        padding: 8px 18px;
+        font-size: 14px;
+        color: #c76ac0;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .quick-reply-btn:hover {
+        background: #c76ac0;
+        color: #fff;
+        border-color: #c76ac0;
+      }
+
+      /* Story document card */
+      .story-card {
+        background: #fff;
+        border: 1.5px solid #d4d8e3;
+        border-radius: 14px;
+        padding: 24px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 42px;
+        max-width: 85%;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        animation: fadeUp 0.35s ease;
+      }
+      .story-card h3 {
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #c76ac0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 11px;
+      }
+      .story-card h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #1e293b;
+      }
+      .story-section {
+        margin-bottom: 16px;
+      }
+      .story-section h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #0c418f;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 6px;
+      }
+      .story-section p {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #1e293b;
+      }
+      .story-card-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid #d4d8e3;
+      }
+      .story-btn {
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+      .story-btn.primary {
+        background: #0c418f;
+        color: #fff;
+      }
+      .story-btn.primary:hover {
+        background: #093270;
+      }
+      .story-btn.secondary {
+        background: transparent;
+        color: #c76ac0;
+        border: 1.5px solid #c76ac0;
+      }
+      .story-btn.secondary:hover {
+        background: #faf5fa;
+      }
+
+      /* Transition / milestone card */
+      .milestone {
+        margin: 10px 0 10px 42px;
+        max-width: 85%;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #0c418f 0%, #c76ac0 100%);
+        border-radius: 14px;
+        color: #fff;
+        animation: fadeUp 0.4s ease;
+        box-shadow: 0 4px 20px rgba(12, 65, 143, 0.25);
+      }
+      .milestone h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .milestone p {
+        font-size: 14px;
+        opacity: 0.9;
+        line-height: 1.5;
+      }
+
+      /* Input area */
+      .input-area {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #d4d8e3;
+        padding: 16px 24px;
+      }
+      .input-wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .input-wrap input {
+        flex: 1;
+        padding: 12px 18px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 24px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+        background: #f8fafc;
+        color: #1e293b;
+      }
+      .input-wrap input:focus {
+        border-color: #0c418f;
+      }
+      .input-wrap input::placeholder {
+        color: #94a3b8;
+      }
+      .send-btn {
+        width: 42px;
+        height: 42px;
+        background: #0c418f;
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .send-btn:hover {
+        background: #093270;
+      }
+      .send-btn:disabled {
+        background: #94a3b8;
+        cursor: default;
+      }
+
+      /* Progress stepper */
+      .progress-wrap {
+        max-width: 720px;
+        margin: 0 auto 20px;
+        padding: 0;
+      }
+      .progress-label {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .stepper {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .step-dot {
+        height: 4px;
+        flex: 1;
+        border-radius: 4px;
+        background: #d4d8e3;
+        transition: background 0.5s ease;
+      }
+      .step-dot.active {
+        background: #0c418f;
+      }
+      .step-dot.done {
+        background: linear-gradient(90deg, #0c418f, #c76ac0);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-icon">M</div>
+      <div>
+        <h1>Your Money Story</h1>
+        <p>A guided conversation about your relationship with money</p>
+      </div>
+    </div>
+
+    <div class="chat-area" id="chatArea">
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-label">
+          <span id="progressText">Getting started</span>
+          <span id="progressStep">Step 1 of 8</span>
+        </div>
+        <div class="stepper" id="stepper">
+          <div class="step-dot" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+          <div class="step-dot" data-step="3"></div>
+          <div class="step-dot" data-step="4"></div>
+          <div class="step-dot" data-step="5"></div>
+          <div class="step-dot" data-step="6"></div>
+          <div class="step-dot" data-step="7"></div>
+          <div class="step-dot" data-step="8"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <input
+          type="text"
+          id="userInput"
+          placeholder="Type your response..."
+          disabled
+        />
+        <button class="send-btn" id="sendBtn" disabled>&#8593;</button>
+      </div>
+    </div>
+
+    <script>
+      const chatArea = document.getElementById("chatArea");
+      const userInput = document.getElementById("userInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const progressText = document.getElementById("progressText");
+      const progressStep = document.getElementById("progressStep");
+
+      let cannedIdx = 0;
+
+      // Canned demo answers
+      const CANNED = [
+        // Past answers
+        "I remember being about eight years old, and my parents were arguing about bills at the kitchen table. I didn't understand the details, but I remember feeling scared — like something was wrong and I couldn't fix it.",
+        "It felt like money was something dangerous — something that could break the people I loved. I learned to avoid thinking about it.",
+        "It was barely talked about — and when it was, it was in hushed voices or arguments. There was a sense it wasn't a topic for kids. I picked up early that asking questions made things worse.",
+        "Mostly scarce. I remember my mom clipping coupons every Sunday and saying no to things I asked for. There were a couple of better years when my dad got a promotion, but that never seemed to last.",
+        // Present answers
+        "Honestly, anxious. I make decent money now but I still feel that tightness in my chest when I check my accounts. There's always this voice saying it's not enough.",
+        "I wish I could look at my bank account without that knot in my stomach. I wish money felt like a tool instead of a threat.",
+        "I save consistently — that part works. The challenge is enjoying any of it. I treat every dollar like it's about to disappear, and it makes spending feel like a small failure.",
+        "Running out. Even with a cushion in the bank, I worry about losing my job, getting sick, something going wrong I can't recover from. The fear doesn't really track the numbers.",
+        // Edit feedback
+        "The present section — can you make it sound less clinical? It's more like... I just feel stuck.",
+        // Future answers
+        "I'd like to feel calm. Like I have a plan and I trust myself to follow it. I want my kids to see money as something normal — not something to fear.",
+        "I want to be able to talk about money openly with my partner and my kids. No more secrets, no more shame.",
+        "I want to leave them more than money — I want them to inherit a sense of security. The feeling that they're going to be okay. The dollars matter, but the calm matters more.",
+        "I picture a small house, time with my partner, no rushing anywhere. Some days it feels possible, other days it feels far away. Mostly it brings hope — and a little bit of disbelief that I might actually get there.",
+      ];
+
+      function nextCanned() {
+        const val = CANNED[cannedIdx] || "That sounds right.";
+        cannedIdx++;
+        return val;
+      }
+
+      // ─── Helpers ───
+
+      function updateProgress(step, label) {
+        progressText.textContent = label;
+        progressStep.textContent = `Step ${step} of 8`;
+        document.querySelectorAll(".step-dot").forEach((dot) => {
+          const s = parseInt(dot.dataset.step);
+          dot.classList.remove("active", "done");
+          if (s < step) dot.classList.add("done");
+          else if (s === step) dot.classList.add("active");
+        });
+      }
+
+      function addMessage(text, type) {
+        const msg = document.createElement("div");
+        msg.className = `message ${type}`;
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = type === "ai" ? "M" : "Y";
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text.replace(/\n/g, "<br>");
+        msg.appendChild(avatar);
+        msg.appendChild(bubble);
+        chatArea.appendChild(msg);
+        scrollBottom();
+      }
+
+      function addTyping() {
+        const div = document.createElement("div");
+        div.className = "message ai";
+        div.id = "typing";
+        div.innerHTML = `<div class="avatar">M</div><div class="bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+        chatArea.appendChild(div);
+        scrollBottom();
+      }
+
+      function removeTyping() {
+        const t = document.getElementById("typing");
+        if (t) t.remove();
+      }
+
+      function aiSays(text, delay) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            addTyping();
+            setTimeout(
+              () => {
+                removeTyping();
+                addMessage(text, "ai");
+                resolve();
+              },
+              800 + Math.random() * 800,
+            );
+          }, delay || 400);
+        });
+      }
+
+      function addQuickReplies(options) {
+        return new Promise((resolve) => {
+          const wrap = document.createElement("div");
+          wrap.className = "quick-replies";
+          options.forEach((text) => {
+            const btn = document.createElement("button");
+            btn.className = "quick-reply-btn";
+            btn.textContent = text;
+            btn.addEventListener("click", () => {
+              wrap.remove();
+              addMessage(text, "user");
+              resolve(text);
+            });
+            wrap.appendChild(btn);
+          });
+          chatArea.appendChild(wrap);
+          scrollBottom();
+        });
+      }
+
+      function waitForInput(placeholder) {
+        return new Promise((resolve) => {
+          userInput.disabled = false;
+          sendBtn.disabled = false;
+          userInput.placeholder = placeholder || "Type your response...";
+          userInput.focus();
+
+          const handler = () => {
+            let val = userInput.value.trim();
+            if (!val) val = nextCanned();
+            userInput.value = "";
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.removeEventListener("click", handler);
+            userInput.removeEventListener("keydown", keyHandler);
+            addMessage(val, "user");
+            resolve(val);
+          };
+          const keyHandler = (e) => {
+            if (e.key === "Enter") handler();
+          };
+          sendBtn.addEventListener("click", handler);
+          userInput.addEventListener("keydown", keyHandler);
+        });
+      }
+
+      function showMilestone(title, subtitle) {
+        const div = document.createElement("div");
+        div.className = "milestone";
+        div.innerHTML = `<h2>${title}</h2><p>${subtitle}</p>`;
+        chatArea.appendChild(div);
+        scrollBottom();
+      }
+
+      function showCurrentStoryCard() {
+        const card = document.createElement("div");
+        card.className = "story-card";
+        card.id = "currentStoryCard";
+        card.innerHTML = `
+        <h3>Your Story So Far</h3>
+        <h2>A Story of Learning to Trust</h2>
+        <div class="story-section">
+          <h4>The Past</h4>
+          <p>Money first entered your world not as coins or bills, but as tension. At eight years old, you sat within earshot of your parents arguing over bills at the kitchen table. You didn't understand the numbers, but you understood the fear — the sense that something was breaking and you were powerless to stop it. From that moment, money became something dangerous. Something to avoid thinking about, because thinking about it meant feeling that helplessness again.</p>
+        </div>
+        <div class="story-section">
+          <h4>The Present</h4>
+          <p>Today, you earn a good living, but the old fear hasn't caught up with the new reality. Checking your accounts still brings a tightness in your chest. There's a persistent voice — not quite yours, maybe an echo of that kitchen table — insisting it's never enough. You recognize this pattern. You know intellectually that money is a tool, but emotionally, it still feels like a threat.</p>
+        </div>
+        <div class="story-card-actions" id="storyActions">
+          <button class="story-btn primary" id="agreeBtn">This is my story</button>
+          <button class="story-btn secondary" id="editBtn">I'd like to adjust something</button>
+        </div>
+      `;
+        chatArea.appendChild(card);
+        scrollBottom();
+
+        return new Promise((resolve) => {
+          document.getElementById("agreeBtn").addEventListener("click", () => {
+            document.getElementById("storyActions").remove();
+            addMessage("Yes — that's my story.", "user");
+            resolve("agree");
+          });
+          document.getElementById("editBtn").addEventListener("click", () => {
+            document.getElementById("storyActions").remove();
+            addMessage("I'd like to adjust something.", "user");
+            resolve("edit");
+          });
+        });
+      }
+
+      function showFinalStoryCard() {
+        const card = document.createElement("div");
+        card.className = "story-card";
+        card.innerHTML = `
+        <h3>Your Money Story</h3>
+        <h2>A Story of Learning to Trust</h2>
+        <div class="story-section">
+          <h4>The Past</h4>
+          <p>Money first entered your world not as coins or bills, but as tension. At eight years old, you sat within earshot of your parents arguing over bills at the kitchen table. You didn't understand the numbers, but you understood the fear — the sense that something was breaking and you were powerless to stop it. From that moment, money became something dangerous. Something to avoid thinking about, because thinking about it meant feeling that helplessness again.</p>
+        </div>
+        <div class="story-section">
+          <h4>The Present</h4>
+          <p>Today, you make good money, but you still feel stuck. The fear from childhood didn't fade — it just got quieter. Every time you check your accounts, it's there — that knot in your stomach, that voice saying it won't be enough. You wish you could just breathe.</p>
+        </div>
+        <div class="story-section">
+          <h4>The Future</h4>
+          <p>You envision calm. A relationship with money built on trust — in your plan, in yourself, in the idea that "enough" is something you get to define. You want to talk about money openly with your partner and your children. No more secrets, no more shame. Most importantly, you want your kids to grow up seeing money as something ordinary and manageable. Not whispered about at kitchen tables. Not feared. Just part of life.</p>
+        </div>
+        <div class="story-card-actions">
+          <button class="story-btn primary" onclick="handleFinalApprove()">Save my Money Story</button>
+          <button class="story-btn secondary" onclick="handleFinalEdit()">I'd like to adjust something</button>
+        </div>
+      `;
+        chatArea.appendChild(card);
+        scrollBottom();
+      }
+
+      function scrollBottom() {
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      // ─── Final handlers ───
+
+      function handleFinalApprove() {
+        document
+          .querySelectorAll(".story-card-actions")
+          .forEach((el) => el.remove());
+        addMessage("This is perfect. Save it.", "user");
+        setTimeout(async () => {
+          await aiSays(
+            "Your Money Story has been saved. This is a living document — as your relationship with money grows and changes, your story can too. You can come back and update it anytime.",
+            300,
+          );
+          addQuickReplies(["Download my story", "Start over"]);
+        }, 300);
+      }
+
+      function handleFinalEdit() {
+        document
+          .querySelectorAll(".story-card-actions")
+          .forEach((el) => el.remove());
+        addMessage("Can we tweak the future section?", "user");
+        setTimeout(async () => {
+          await aiSays(
+            "Of course — what would you like to change about the future section?",
+            300,
+          );
+          const input = await waitForInput("What should we change?");
+          await aiSays(
+            "Got it — I've updated your story with that change. Take another look and let me know when it feels right.",
+            300,
+          );
+          addQuickReplies(["Looks great — save it", "One more change"]);
+        }, 300);
+      }
+
+      // ─── Main flow ───
+
+      async function runFlow() {
+        // ━━━ STEP 1: Intro ━━━
+        updateProgress(1, "Welcome");
+        await aiSays(
+          "Your relationship with money has a story. It’s a story that’s shaped by where you grew up, what you were taught about money, and the choices you've made along the way. \nI'm here to help you tell it.",
+          600,
+        );
+        await aiSays(
+          "I'll ask you questions, listen closely, and help you write your Money Story in your voice. We'll move through three chapters — your past, your present, and the future you want. Answer honestly, in whatever way feels natural. When we're done, I'll weave it into a personal narrative for you to have and continue to edit over time. You see, one of the most powerful things about your money story is that there’s always a blank page in front of you, waiting for you to author the next chapter.\nThere are no right answers here. Just yours.\n\nReady to begin?",
+          300,
+        );
+        const intro = await addQuickReplies([
+          "Let's do it!",
+          "Tell me more first",
+        ]);
+
+        if (intro === "Tell me more first") {
+          await aiSays(
+            "Your Money Story is a short, personal document that captures how money has shaped your life — where you've been, where you are now, and where you want to go.\n\nI'll write it from what you tell me. Nothing made up, nothing assumed. Shall we begin?",
+            300,
+          );
+          await addQuickReplies(["Let's begin"]);
+        }
+
+        // ━━━ STEP 2: The Past ━━━
+        updateProgress(2, "The Past");
+        await aiSays(
+          "Let's start with the past.\n\nWhat is your earliest or most vivid memory involving money? It could be something you were told, something you witnessed, or something you felt.",
+          300,
+        );
+        await waitForInput("Share a memory about money from your past...");
+        await aiSays(
+          "Thank you for sharing that. It sounds like that experience left a real mark.\n\nCan you say more about what lesson you took from it, even if it was unspoken?",
+          300,
+        );
+        await waitForInput("What did you take away from that experience?");
+        await aiSays(
+          "That's a powerful insight. I'll hold onto that.\n\nHow was money talked about in your home while you were growing up?",
+          400,
+        );
+        await waitForInput("How did your family talk about money?");
+        await aiSays(
+          "That tells me a lot about the air you grew up breathing.\n\nWere there moments in your life when money felt especially abundant — or especially scarce?",
+          300,
+        );
+        await waitForInput("Times of abundance or scarcity...");
+
+        // ━━━ STEP 3: The Present ━━━
+        updateProgress(3, "The Present");
+        await aiSays(
+          "Now let's talk about the present.\n\nHow would you describe your current relationship with money? What emotions come up when you think about your finances today?",
+          500,
+        );
+        await waitForInput("Describe how you feel about money right now...");
+        await aiSays(
+          "I hear you. That's a really honest reflection.\n\nIs there anything you'd add about what you wish were different right now?",
+          300,
+        );
+        await waitForInput("What do you wish were different?");
+        await aiSays(
+          "Thank you. Let me ask it from another angle —\n\nWhat's working well for you with money right now? And what feels challenging?",
+          400,
+        );
+        await waitForInput("What's working, what's challenging?");
+        await aiSays(
+          "That's a useful split. It sounds like the mechanics are in place but the feelings haven't caught up.\n\nWhen it comes to your money, what do you worry about the most?",
+          300,
+        );
+        await waitForInput("What worries you most?");
+
+        // ━━━ STEP 4: Show Current Story ━━━
+        updateProgress(4, "Your story so far");
+        await aiSays(
+          "Thank you for being so open. Based on everything you've shared, I've written the first part of your story. Take a look —",
+          500,
+        );
+        const choice = await showCurrentStoryCard();
+
+        // ━━━ STEP 5: Agree or Edit loop ━━━
+        updateProgress(5, "Review & refine");
+
+        if (choice === "edit") {
+          // Edit loop
+          await aiSays("Of course — what would you like to change?", 300);
+          await waitForInput("What should we adjust?");
+          await aiSays(
+            "Got it. Here's a revised version of the present section:\n\n\"Today, you make good money, but you still feel stuck. The fear from childhood didn't fade — it just got quieter. Every time you check your accounts, it's there — that knot in your stomach, that voice saying it won't be enough. You wish you could just breathe.\"",
+            300,
+          );
+          const editChoice = await addQuickReplies([
+            "That's better — let's continue",
+            "One more tweak",
+          ]);
+          if (editChoice === "One more tweak") {
+            await waitForInput("What else should we change?");
+            await aiSays("Updated. How does it feel now?", 300);
+            await addQuickReplies(["Good — let's move on"]);
+          }
+        } else {
+          await aiSays("I'm glad that resonates.", 300);
+        }
+
+        // ━━━ STEP 6: Transition ━━━
+        updateProgress(6, "Looking ahead");
+        await new Promise((r) => setTimeout(r, 600));
+        showMilestone(
+          "The best part of your story is that we're not done.",
+          "You've named where you've been and where you are. Now let's write where you're going.",
+        );
+        await new Promise((r) => setTimeout(r, 1200));
+        await addQuickReplies(["I'm ready"]);
+
+        // ━━━ STEP 7: The Future ━━━
+        updateProgress(7, "The Future");
+        await aiSays(
+          "When you imagine a healthy, peaceful relationship with money — what does that look like?\n\nWhat would be different from today?",
+          300,
+        );
+        await waitForInput("Imagine your ideal future with money...");
+        await aiSays(
+          "That's a beautiful vision. Is there anything else — maybe about how you'd like money to show up in your relationships or your family?",
+          300,
+        );
+        await waitForInput("Anything else about your future with money?");
+        await aiSays(
+          "Let's go a step further.\n\nWhat kind of financial legacy do you want to leave for your family?",
+          400,
+        );
+        await waitForInput("What legacy do you want to leave?");
+        await aiSays(
+          "That's a meaningful answer — and it tells me a lot about what 'enough' really means to you.\n\nAs you think about your future retirement, what kind of life do you hope to be living, and what feelings does that bring up for you?",
+          300,
+        );
+        await waitForInput("Picture your retirement life...");
+
+        // ━━━ STEP 8: Final Money Story ━━━
+        updateProgress(8, "Your Money Story");
+        await aiSays(
+          "Here it is — your complete Money Story, written from everything you shared with me.",
+          500,
+        );
+        showFinalStoryCard();
+      }
+
+      // Kick off
+      runFlow();
+    </script>
+  </body>
+</html>
