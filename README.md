@@ -43,6 +43,11 @@ https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-2
 https://consult-with-riz.github.io/lydia-web-app/lydia-agent-map-3
 
 
+### Lydia Agents
+
+https://consult-with-riz.github.io/lydia-web-app/money-story.html
+
+
 ## Lydia Voice Architecture Comparison
 
 A visual comparing two approaches to integrating ElevenLabs voice capabilities into Lydia, Shaping Wealth's AI behavioral coaching platform.
